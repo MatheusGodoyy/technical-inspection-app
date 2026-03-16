@@ -1,5 +1,4 @@
 ### Mechanical Inspection App
-
 Mobile application designed for **mechanical inspection recording and tracking**, enabling the identification of non-conformities, technical observations, recommendations, and photographic evidence.
 
 ---
@@ -21,15 +20,23 @@ Mobile application designed for **mechanical inspection recording and tracking**
 
 ---
 
-### Project Structure
+## Project Structure
+
 mechanical-inspection-app/
-├── assets/
-├── App.tsx
-├── app.json
-├── index.ts
-├── package.json
-├── tsconfig.json
-└── README.md 
+├── assets/                # Images, icons and static resources
+├── screens/               # Application screens
+│   ├── FormularioRelatorio.tsx
+│   └── ListaRelatorios.tsx
+├── services/              # Business logic and utilities
+│   └── pdfService.ts
+├── styles/                # Global styles
+│   └── styles.ts
+├── App.tsx                # Main application component
+├── index.ts               # Application entry point
+├── app.json               # Expo configuration
+├── package.json           # Project dependencies
+├── tsconfig.json          # TypeScript configuration
+└── README.md              # Project documentation
 
 ### Getting Started
 
@@ -45,9 +52,13 @@ npm install
 ### Running the App
 npx expo start
 
-### Project Status
+### Clone the repository
+on bash
+git clone https://github.com/YOUR_USERNAME/mechanical-inspection-app.git
+cd mechanical-inspection-app
 
-### Work in progress
+### Project Status
+Work in progress
 
 ### Project Purpose
 This project was developed for learning and portfolio purposes, with a focus on applying mobile development concepts to industrial and mechanical inspection scenarios.
