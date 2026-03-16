@@ -1,35 +1,70 @@
+import { useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-
 import ListaRelatorios from "./screens/ListaRelatorios";
 import FormularioRelatorio from "./screens/FormularioRelatorio";
+import { sincronizar, temInternet } from "./services/syncService";
+import * as Network from "expo-network";
+import { criarTabelas } from "./database/database.js";
 
 const Stack = createNativeStackNavigator();
 
-export default function App(){
+export default function App() {
 
-return(
+    useEffect(() => {
 
-<NavigationContainer>
+        const iniciarApp = async () => {
 
-<Stack.Navigator>
+            // cria a tabela SQLite
+            await criarTabelas();
 
-<Stack.Screen
-name="Lista"
-component={ListaRelatorios}
-options={{ title:"Relatórios" }}
-/>
+            // verifica internet
+            const online = await temInternet();
 
-<Stack.Screen
-name="Formulario"
-component={FormularioRelatorio}
-options={{ title:"Inspeção" }}
-/>
+            if (online) {
+                await sincronizar();
+            }
 
-</Stack.Navigator>
+        };
 
-</NavigationContainer>
+        iniciarApp();
 
-)
+        const subscription = Network.addNetworkStateListener(async (state) => {
 
+            if (state.isConnected) {
+                console.log("Internet voltou, sincronizando...");
+                await sincronizar();
+            }
+
+        });
+
+        return () => {
+            subscription.remove();
+        };
+
+    }, []);
+
+    return (
+
+        <NavigationContainer>
+
+            <Stack.Navigator>
+
+                <Stack.Screen
+                    name="Lista"
+                    component={ListaRelatorios}
+                    options={{ title: "Relatórios" }}
+                />
+
+                <Stack.Screen
+                    name="Formulario"
+                    component={FormularioRelatorio}
+                    options={{ title: "Inspeção" }}
+                />
+
+            </Stack.Navigator>
+
+        </NavigationContainer>
+
+    )
 }

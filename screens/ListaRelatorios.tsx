@@ -105,7 +105,7 @@ export default function ListaRelatorios({ navigation }: any) {
                         marginVertical: 15
                     }}
                 />
-                <Text style={{ fontSize: 20, fontWeight:"600", color: "##333", marginBottom: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: "600", color: "##333", marginBottom: 6 }}>
                     Relatórios em aberto
                 </Text>
 
@@ -144,4 +144,4 @@ export default function ListaRelatorios({ navigation }: any) {
         </ScrollView>
 
     )
-}
+};

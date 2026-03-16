@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-    export const styles = StyleSheet.create ({
+export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f2f2f2',
@@ -42,12 +42,12 @@ import { StyleSheet } from "react-native";
     textAlignVertical: 'top',
   },
   signature: {
-  height: 180,
-  borderWidth: 1,
-  borderColor: "#333",
-  marginTop: 20,
-  backgroundColor: "#fff"
-},
+    height: 180,
+    borderWidth: 1,
+    borderColor: "#333",
+    marginTop: 20,
+    backgroundColor: "#fff"
+  },
   signatureLabel: {
     textAlign: 'center',
     marginTop: 4,
@@ -139,12 +139,12 @@ import { StyleSheet } from "react-native";
     color: '#721c24',
     fontWeight: 'bold',
   },
-  
+
   logo: {
-  width: 300,
-  height: 350,
-  resizeMode: 'contain',
-  marginBottom: 20,
-},
-  
+    width: 300,
+    height: 350,
+    resizeMode: 'contain',
+    marginBottom: 20,
+  },
+
 });

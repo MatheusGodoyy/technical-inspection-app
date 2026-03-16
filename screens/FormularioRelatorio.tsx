@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useState, useRef } from 'react';
 import { gerarPDF } from "../services/pdfService";
+import db from "../database/database.js";
 import {
     Alert,
     Image,
@@ -17,6 +18,7 @@ import {
     Modal,
     Button
 } from 'react-native';
+import { sincronizar } from '../services/syncService';
 
 
 export default function App({ navigation, route }: any) {
@@ -105,6 +107,105 @@ export default function App({ navigation, route }: any) {
                 },
             ]
         );
+    };
+
+    const gerarPDFESalvar = async () => {
+
+        console.log("BOTAO GERAR PDF CLICADO");
+
+        try {
+
+            const resultado = await gerarPDF({
+                tituloInspecao,
+                tipoInspecao,
+                data1,
+                data2,
+                responsavel,
+                fnEquipamento,
+                nomeEquipamento,
+                localInstalacao,
+                plano,
+                listaTarefas,
+                escopos,
+                assinatura
+            });
+
+            console.log("RESULTADO PDF:", resultado);
+
+            if (!resultado) {
+                console.log("PDF NAO GERADO");
+                return;
+            }
+
+            // 🔹 calcular estatísticas da inspeção
+            const itensConforme = escopos.filter(
+                (item) => item.status === "conforme"
+            ).length;
+
+            const itensNaoConforme = escopos.filter(
+                (item) => item.status === "nao_conforme"
+            ).length;
+
+            const totalItens = escopos.length;
+
+            await db.runAsync(
+                `INSERT INTO inspecoes (
+                titulo_inspecao,
+                tipo_inspecao,
+                data_inspecao,
+                proxima_inspecao,
+                responsavel,
+
+                equipamento_fn,
+                equipamento_nome,
+                equipamento_local,
+                equipamento_plano,
+                equipamento_lista_tarefas,
+
+                itens_conforme,
+                itens_nao_conforme,
+                total_itens,
+
+                escopos,
+
+                path_pdf,
+                status_sync
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                [
+                    tituloInspecao,
+                    tipoInspecao,
+                    data1,
+                    data2,
+                    responsavel,
+
+                    fnEquipamento,
+                    nomeEquipamento,
+                    localInstalacao,
+                    plano,
+                    listaTarefas,
+
+                    itensConforme,
+                    itensNaoConforme,
+                    totalItens,
+
+                    JSON.stringify(escopos),
+
+                    resultado.path_pdf,
+                    "pending"
+                ]
+            );
+
+            await sincronizar();
+
+            console.log("SALVO NO SQLITE");
+
+        } catch (erro) {
+
+            console.log("ERRO AO GERAR PDF:", erro);
+
+        }
+
     };
 
     const handleSalvar = () => {
@@ -715,6 +816,11 @@ export default function App({ navigation, route }: any) {
 
             <View style={{ marginTop: 30 }}>
 
+                <Button
+                    title="Gerar PDF"
+                    onPress={gerarPDFESalvar}
+                />
+
                 <Pressable
                     style={styles.button}
                     onPress={salvarRelatorio}
@@ -732,26 +838,6 @@ export default function App({ navigation, route }: any) {
                         Finalizar relatório
                     </Text>
                 </Pressable>
-
-                <Button
-                    title="Gerar PDF"
-                    onPress={() =>
-                        gerarPDF({
-                            tituloInspecao,
-                            tipoInspecao,
-                            data1,
-                            data2,
-                            responsavel,
-                            fnEquipamento,
-                            nomeEquipamento,
-                            localInstalacao,
-                            plano,
-                            listaTarefas,
-                            escopos,
-                            assinatura
-                        })
-                    }
-                />
 
             </View>
         </ScrollView>
