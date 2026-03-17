@@ -1,21 +1,24 @@
 {
   "expo": {
-    "name": "inspecaoSylvamo",
-    "slug": "inspecaoSylvamo",
-    "version": "1.0.0",
+    "name": "Inspeção Técnica Digital",
+    "slug": "inspecao-tecnica-digital",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/sylvamo-logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.sylvamo.inspecao",
+      "buildNumber": "1.0.0"
     },
     "android": {
+      "package": "com.sylvamo.inspecao",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -27,8 +30,12 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-asset",
       "expo-sqlite"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "4d5e5109-384f-4ca9-9902-d02726f2292e"
+      }
+    }
   }
 }

@@ -2,8 +2,16 @@ import db from "../database/database";
 import * as Network from "expo-network";
 import * as FileSystem from "expo-file-system/legacy";
 
+const formatarData = (dataBR) => {
+    if (!dataBR) return null;
 
-const URL_FLUXO = "https://defaulteb4154c51e814c3c9e5da8a547806c.8e.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/ec9dfc3a7c914e06bc5d89b81831b7a6/triggers/manual/paths/invoke?api-version=1";
+    const [dia, mes, ano] = dataBR.split("/");
+
+    return `${ano}-${mes}-${dia}`; // formato aceito pelo Power Automate
+};
+
+const URL_FLUXO = "https://defaulteb4154c51e814c3c9e5da8a547806c.8e.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/ec9dfc3a7c914e06bc5d89b81831b7a6/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=WyX1laUfT9GICmr8rh1t8BAyXXwWJi8U-RYxwIX7Lsk";
+
 
 let sincronizando = false;
 
@@ -55,8 +63,8 @@ export const enviarInspecao = async (inspecao) => {
 
                 titulo_inspecao: inspecao.titulo_inspecao,
                 tipo_inspecao: inspecao.tipo_inspecao,
-                data_inspecao: inspecao.data_inspecao,
-                proxima_inspecao: inspecao.proxima_inspecao,
+                data_inspecao: formatarData(inspecao.data_inspecao),
+                proxima_inspecao: formatarData(inspecao.proxima_inspecao),
                 responsavel: inspecao.responsavel,
 
                 equipamento: {

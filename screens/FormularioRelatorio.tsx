@@ -112,8 +112,11 @@ export default function App({ navigation, route }: any) {
     const gerarPDFESalvar = async () => {
 
         console.log("BOTAO GERAR PDF CLICADO");
+        Alert.alert("DEBUG", "Entrou na função gerarPDFESalvar");
 
         try {
+            //DEBUG
+            Alert.alert("DEBUG", "Antes de gerar PDF");
 
             const resultado = await gerarPDF({
                 tituloInspecao,
@@ -131,9 +134,13 @@ export default function App({ navigation, route }: any) {
             });
 
             console.log("RESULTADO PDF:", resultado);
+            //DEBUG
+            Alert.alert("DEBUG", "PDF gerado");
 
             if (!resultado) {
                 console.log("PDF NAO GERADO");
+                //DEBUG
+                Alert.alert("ERRO", "PDF não foi gerado");
                 return;
             }
 
@@ -147,6 +154,9 @@ export default function App({ navigation, route }: any) {
             ).length;
 
             const totalItens = escopos.length;
+
+            //DEBUG
+            Alert.alert("DEBUG", "Antes de salvar no banco");
 
             await db.runAsync(
                 `INSERT INTO inspecoes (
@@ -196,13 +206,26 @@ export default function App({ navigation, route }: any) {
                 ]
             );
 
+            // 🔴 DEBUG 5 → Salvou no banco
+            Alert.alert("DEBUG", "Salvou no SQLite");
+
+            // 🔴 DEBUG 6 → Antes da sincronização (ENVIO PRO FLOW)
+            Alert.alert("DEBUG", "Antes de sincronizar");
+
             await sincronizar();
+
+            // 🔴 DEBUG 7 → Depois da sincronização
+            Alert.alert("DEBUG", "Sincronização finalizada");
 
             console.log("SALVO NO SQLITE");
 
         } catch (erro) {
 
             console.log("ERRO AO GERAR PDF:", erro);
+
+            // 🔴 DEBUG ERRO → Mostra erro real no celular
+            Alert.alert("ERRO", JSON.stringify(erro));
+
 
         }
 
@@ -389,6 +412,8 @@ export default function App({ navigation, route }: any) {
 
 
     const finalizarRelatorio = async () => {
+
+        await gerarPDFESalvar();
 
         const dados = await AsyncStorage.getItem("relatorios")
 
@@ -816,11 +841,6 @@ export default function App({ navigation, route }: any) {
 
             <View style={{ marginTop: 30 }}>
 
-                <Button
-                    title="Gerar PDF"
-                    onPress={gerarPDFESalvar}
-                />
-
                 <Pressable
                     style={styles.button}
                     onPress={salvarRelatorio}
@@ -831,7 +851,7 @@ export default function App({ navigation, route }: any) {
                 </Pressable>
 
                 <Pressable
-                    style={[styles.button, { backgroundColor: "#2e7d32" }]}
+                    style={[styles.button, { backgroundColor: "#e80303" }]}
                     onPress={confirmarFinalizacao}
                 >
                     <Text style={styles.buttonText}>

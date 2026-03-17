@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import ListaRelatorios from "./screens/ListaRelatorios";
@@ -6,11 +6,14 @@ import FormularioRelatorio from "./screens/FormularioRelatorio";
 import { sincronizar, temInternet } from "./services/syncService";
 import * as Network from "expo-network";
 import { criarTabelas } from "./database/database.js";
+import LoadingScreen from "./screens/LoadingScreen";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
 
+    const [loading, setLoading] = useState(true);
+    
     useEffect(() => {
 
         const iniciarApp = async () => {
