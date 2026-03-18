@@ -98,9 +98,6 @@ export default function App({ navigation, route }: any) {
     console.log("BOTAO GERAR PDF CLICADO");
 
     try {
-      //DEBUG
-      Alert.alert("DEBUG", "Antes de gerar PDF");
-
       const resultado = await gerarPDF({
         tituloInspecao,
         tipoInspecao,
@@ -343,6 +340,31 @@ export default function App({ navigation, route }: any) {
   }, []);
 
   const finalizarRelatorio = async () => {
+    let valido = true;
+
+    setErroData1(false);
+    setErroData2(false);
+
+    if (!isValidDate(data1)) {
+      setErroData1(true);
+      valido = false;
+    }
+
+    if (!isValidDate(data2)) {
+      setErroData2(true);
+      valido = false;
+    }
+
+    if (isValidDate(data1) && isValidDate(data2) && !isNextDateAfterCurrent(data1, data2)) {
+      setErroData2(true);
+      valido = false;
+    }
+
+    if (!valido) {
+      Alert.alert("Erro", "Corrija as datas antes de finalizar");
+      return;
+    }
+
     await gerarPDFESalvar();
 
     const dados = await AsyncStorage.getItem("relatorios");
@@ -359,9 +381,9 @@ export default function App({ navigation, route }: any) {
 
     await AsyncStorage.setItem("relatorios", JSON.stringify(novaLista));
 
-    Alert.alert("Relatório finalizado");
+    navigation.navigate("Lista");
 
-    navigation.navigate("ListaRelatorios");
+    Alert.alert("Relatório finalizado");
   };
 
   const buscarRelatoriosAbertos = async () => {
@@ -474,8 +496,9 @@ export default function App({ navigation, route }: any) {
     <ScrollView style={styles.container}>
       {/* CABEÇALHO */}
       <View style={styles.header}>
-        <Text style={styles.title}>RELATÓRIO DE INSPEÇÃO</Text>
-        <Text style={styles.subtitle}>Sylvamo</Text>
+        <Text style={[styles.subtitle, { marginBottom: 15 }]}>Sylvamo</Text>
+
+      <Text style={styles.title}>RELATÓRIO DIGITAL DE INSPEÇÃO TÉCNICA</Text>
       </View>
 
       {/* IDENTIFICAÇÃO */}
@@ -485,7 +508,7 @@ export default function App({ navigation, route }: any) {
       <TextInput
         style={styles.input}
         placeholder="TÍTULO DA INSPEÇÃO"
-        placeholderTextColor="#444"
+        placeholderTextColor="#ababab"
         value={tituloInspecao}
         onChangeText={setTituloInspecao}
       />
@@ -495,91 +518,110 @@ export default function App({ navigation, route }: any) {
         <Text style={styles.sectionText}>DADOS DA INSPEÇÃO</Text>
       </View>
 
-      <TextInput
-        style={styles.input}
-        placeholder="TIPO DE INSPEÇÃO"
-        placeholderTextColor="#444"
-        value={tipoInspecao}
-        onChangeText={setArea}
-      />
+      <View style={{ marginBottom: 15, marginTop: 10 }}>
+        <Text style={styles.label}>Tipo de inspeção:</Text>
+        <TextInput
+          style={styles.input}
+          placeholderTextColor="#ababab"
+          value={tipoInspecao}
+          onChangeText={setArea}
+        />
+      </View>
 
-      <TextInput
-        style={[styles.input, erroData1 && styles.inputError]}
-        placeholder="DATA INSPEÇÃO ATUAL (DD/MM/AAAA)"
-        placeholderTextColor="#444"
-        keyboardType="numeric"
-        value={data1}
-        onChangeText={(text) => {
-          setData1(formatDate(text));
-          setErroData1(false);
-        }}
-      />
+      <View style={{ marginBottom: 15, marginTop: 10 }}>
+        <Text style={styles.label}>Data da inspeção:</Text>
+        <TextInput
+          style={[styles.input, erroData1 && styles.inputError]}
+          placeholder="(DD/MM/AAAA)"
+          placeholderTextColor="#ababab"
+          keyboardType="numeric"
+          value={data1}
+          onChangeText={(text) => {
+            setData1(formatDate(text));
+            setErroData1(false);
+          }}
+        />
+      </View>
 
-      <TextInput
-        style={[styles.input, erroData2 && styles.inputError]}
-        placeholder="DATA PRÓXIMA INSPEÇÃO (DD/MM/AAAA)"
-        placeholderTextColor="#444"
-        keyboardType="numeric"
-        value={data2}
-        onChangeText={(text) => {
-          setData2(formatDate(text));
-          setErroData2(false);
-        }}
-      />
+      <View style={{ marginBottom: 15, marginTop: 10 }}>
+        <Text style={styles.label}>Data da próxima inspeção:</Text>
+        <TextInput
+          style={[styles.input, erroData2 && styles.inputError]}
+          placeholder="(DD/MM/AAAA)"
+          placeholderTextColor="#ababab"
+          keyboardType="numeric"
+          value={data2}
+          onChangeText={(text) => {
+            setData2(formatDate(text));
+            setErroData2(false);
+          }}
+        />
+      </View>
 
-      <TextInput
-        style={styles.input}
-        placeholder="INSPETOR"
-        placeholderTextColor="#444"
-        value={responsavel}
-        onChangeText={setResponsavel}
-      />
+      <View style={{ marginBottom: 15, marginTop: 10 }}>
+        <Text style={styles.label}>Nome do inspetor:</Text>
+        <TextInput
+          style={styles.input}
+          placeholderTextColor="#ababab"
+          value={responsavel}
+          onChangeText={setResponsavel}
+        />
+      </View>
 
       {/* EQUIPAMENTO */}
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionText}>DADOS DO EQUIPAMENTO</Text>
       </View>
 
-      <TextInput
-        style={styles.input}
-        placeholder="FN DO EQUIPAMENTO"
-        placeholderTextColor="#444"
-        value={fnEquipamento}
-        onChangeText={setFnEquipamento}
-      />
+      <View style={{ marginBottom: 15, marginTop: 10 }}>
+        <Text style={styles.label}>FN do equipamento:</Text>
+        <TextInput
+          style={styles.input}
+          placeholderTextColor="#ababab"
+          value={fnEquipamento}
+          onChangeText={setFnEquipamento}
+        />
+      </View>
 
-      <TextInput
-        style={styles.input}
-        placeholder="NOME DO EQUIPAMENTO OU ROTA"
-        placeholderTextColor="#444"
-        value={nomeEquipamento}
-        onChangeText={setnomeEquipamento}
-      />
+      <View style={{ marginBottom: 15, marginTop: 10 }}>
+        <Text style={styles.label}>Nome do equipamento ou rota:</Text>
+        <TextInput
+          style={styles.input}
+          placeholderTextColor="#ababab"
+          value={nomeEquipamento}
+          onChangeText={setnomeEquipamento}
+        />
+      </View>
 
-      <TextInput
-        style={styles.input}
-        placeholder="LOCAL DA INSTALAÇÃO"
-        placeholderTextColor="#444"
-        value={localInstalacao}
-        onChangeText={setLocalInstalacao}
-      />
+      <View style={{ marginBottom: 15, marginTop: 10 }}>
+        <Text style={styles.label}> Local da instalação: </Text>
+        <TextInput
+          style={styles.input}
+          placeholderTextColor="#ababab"
+          value={localInstalacao}
+          onChangeText={setLocalInstalacao}
+        />
+      </View>
 
-      <TextInput
-        style={styles.input}
-        placeholder="PLANO"
-        placeholderTextColor="#444"
-        value={plano}
-        onChangeText={setPlano}
-      />
+      <View style={{ marginBottom: 15, marginTop: 10 }}>
+        <Text style={styles.label}> Plano </Text>
+        <TextInput
+          style={styles.input}
+          placeholderTextColor="#ababab"
+          value={plano}
+          onChangeText={setPlano}
+        />
+      </View>
 
-      <TextInput
-        style={styles.input}
-        placeholder="LISTA DE TAREFAS"
-        placeholderTextColor="#444"
-        value={listaTarefas}
-        onChangeText={setListaTarefas}
-      />
-
+      <View style={{ marginBottom: 15, marginTop: 10 }}>
+        <Text style={styles.label}> Lista de tarefas: </Text>
+        <TextInput
+          style={styles.input}
+          placeholderTextColor="#ababab"
+          value={listaTarefas}
+          onChangeText={setListaTarefas}
+        />
+      </View>
       {/* OBJETIVOS */}
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionText}>OBJETIVOS DA INSPEÇÃO</Text>

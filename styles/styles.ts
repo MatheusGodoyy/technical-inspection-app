@@ -5,16 +5,24 @@ export const styles = StyleSheet.create({
     backgroundColor: "#f2f2f2",
     padding: 5,
   },
+
+  label: {
+  fontSize: 14,
+  color: "#888",        
+  marginBottom: -6,
+},
   header: {
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: -8,
   },
   title: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: "bold"
   },
   subtitle: {
-    color: "#666",
+    fontSize: 45,
+    color: "#651e91ff",
+    fontWeight: "bold"
   },
   sectionHeader: {
     backgroundColor: "#651e91ff",
@@ -24,6 +32,7 @@ export const styles = StyleSheet.create({
   sectionText: {
     color: "#ffffffff",
     fontWeight: "bold",
+    textAlign: "center"
   },
   input: {
     borderWidth: 1,
@@ -60,9 +69,9 @@ export const styles = StyleSheet.create({
     backgroundColor: "#f9f9f9",
   },
   fixedText: {
-    fontSize: 14,
+    fontSize: 17,
     color: "#000",
-    lineHeight: 20,
+    lineHeight: 23,
   },
   button: {
     backgroundColor: "#4CAF50",
