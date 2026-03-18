@@ -1,50 +1,47 @@
-import { Asset } from "expo-asset";
 import * as FileSystem from "expo-file-system/legacy";
 import * as ImageManipulator from "expo-image-manipulator";
 import * as Print from "expo-print";
-import * as Sharing from "expo-sharing";
-import { Alert } from "react-native";
-import logo from "../assets/sylvamo-logo.png";
+import { Alert, Image } from "react-native";
 import { pdfStyles } from "../styles/pdfStyles";
 
 export async function gerarPDF(relatorio: any) {
   try {
     const escoposHTML = relatorio.escopos
       ? (
-        await Promise.all(
-          relatorio.escopos.map(async (item: any, index: number) => {
-            const fotosBase64 = await Promise.all(
-              (item.fotos || []).map(async (foto: string) => {
-                try {
-                  // redimensiona imagem
-                  const manipulada = await ImageManipulator.manipulateAsync(
-                    foto,
-                    [{ resize: { width: 800 } }],
-                    {
-                      compress: 0.7,
-                      format: ImageManipulator.SaveFormat.JPEG,
-                    },
-                  );
+          await Promise.all(
+            relatorio.escopos.map(async (item: any, index: number) => {
+              const fotosBase64 = await Promise.all(
+                (item.fotos || []).map(async (foto: string) => {
+                  try {
+                    // redimensiona imagem
+                    const manipulada = await ImageManipulator.manipulateAsync(
+                      foto,
+                      [{ resize: { width: 800 } }],
+                      {
+                        compress: 0.7,
+                        format: ImageManipulator.SaveFormat.JPEG,
+                      },
+                    );
 
-                  // converte para base64
-                  const base64 = await FileSystem.readAsStringAsync(manipulada.uri, {
-                    encoding: "base64",
-                  });
+                    // converte para base64
+                    const base64 = await FileSystem.readAsStringAsync(manipulada.uri, {
+                      encoding: "base64",
+                    });
 
-                  return `data:image/jpeg;base64,${base64}`;
-                } catch (error) {
-                  console.log("Erro ao processar foto:", foto);
-                  return null;
-                }
-              }),
-            );
+                    return `data:image/jpeg;base64,${base64}`;
+                  } catch (error) {
+                    console.log("Erro ao processar foto:", foto);
+                    return null;
+                  }
+                }),
+              );
 
-            const fotosHTML = fotosBase64
-              .filter(Boolean)
-              .map((foto) => `<img src="${foto}" style="width:150px;height:auto;margin:5px;" />`)
-              .join("");
+              const fotosHTML = fotosBase64
+                .filter(Boolean)
+                .map((foto) => `<img src="${foto}" style="width:150px;height:auto;margin:5px;" />`)
+                .join("");
 
-            return `
+              return `
 
 <div class="item">
 
@@ -68,20 +65,10 @@ ${fotosHTML}
 </div>
 
 `;
-          }),
-        )
-      ).join("")
+            }),
+          )
+        ).join("")
       : "";
-
-    const asset = Asset.fromModule(logo);
-
-    await asset.downloadAsync();
-
-    const base64Logo = await FileSystem.readAsStringAsync(asset.localUri!, {
-      encoding: "base64",
-    });
-
-    const logoBase64 = `data:image/png;base64,${base64Logo}`;
     const html = `
 
 <html>
@@ -91,10 +78,6 @@ ${fotosHTML}
 
   <body>
     <div class="header">
-
-      <div class="header-left">
-        <img class="logo" src="${logoBase64}" />
-      </div>
 
       <div class="header-center">
         RELATÓRIO TÉCNICO DE INSPEÇÃO
@@ -160,10 +143,9 @@ ${fotosHTML}
 
         <div class="signature-box">
 
-          ${relatorio.assinatura
-        ? `<img src="${relatorio.assinatura}" />`
-        : `<p>Sem assinatura</p>`
-      }
+          ${
+            relatorio.assinatura ? `<img src="${relatorio.assinatura}" />` : `<p>Sem assinatura</p>`
+          }
 
           <div class="signature-label">
             Assinatura do responsável pela inspeção.
@@ -190,7 +172,7 @@ ${fotosHTML}
 
     if (!info.exists) {
       await FileSystem.makeDirectoryAsync(pastaRelatorios, { intermediates: true });
-    };
+    }
 
     const { uri } = await Print.printToFileAsync({
       html,
@@ -206,7 +188,6 @@ ${fotosHTML}
       idInspecao,
       path_pdf: caminhoFinal,
     };
-
   } catch (error) {
     console.log("ERRO PDF:", error);
     Alert.alert("Erro ao gerar PDF");
