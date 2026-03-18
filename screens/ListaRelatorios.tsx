@@ -1,6 +1,6 @@
 import { View, Text, Pressable, Alert, Image, ScrollView } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback } from "react";
 import { styles } from "../styles/styles";

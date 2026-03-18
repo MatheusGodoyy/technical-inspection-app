@@ -4,14 +4,15 @@ import * as Network from "expo-network";
 import { useEffect, useRef, useState } from "react";
 import { Alert, Image, Modal, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import Signature from "react-native-signature-canvas";
-import db from "../database/database.js";
+import db from "../database/database";
 import { gerarPDF } from "../services/pdfService";
-import { sincronizar } from "../services/syncService";
+import { sincronizar } from "../services/syncService.js";
 import { styles } from "../styles/styles";
 
 export default function App({ navigation, route }: any) {
   const relatorio = route.params?.relatorio;
   const signatureRef = useRef<any>(null);
+  const SignaturePad = Signature as any;
   const [relatorioAtualId, setRelatorioAtualId] = useState<string | null>(null);
   const [assinatura, setAssinatura] = useState<string | null>(null);
   const [assinando, setAssinando] = useState(false);
@@ -436,7 +437,7 @@ export default function App({ navigation, route }: any) {
   if (assinando) {
     return (
       <View style={{ flex: 1, backgroundColor: "#fff" }}>
-        <Signature
+        <SignaturePad
           ref={signatureRef}
           onOK={handleOK}
           descriptionText="Assine abaixo"
