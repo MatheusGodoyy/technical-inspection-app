@@ -1,14 +1,25 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from "expo-image-picker";
+import * as MediaLibrary from "expo-media-library";
 import * as Network from "expo-network";
 import { useEffect, useRef, useState } from "react";
-import { Alert, Image, Modal, Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import {
+  Alert,
+  Image,
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  Pressable,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import Signature from "react-native-signature-canvas";
 import db from "../database/database";
 import { gerarPDF } from "../services/pdfService";
 import { sincronizar } from "../services/syncService.js";
 import { styles } from "../styles/styles";
-import * as MediaLibrary from 'expo-media-library';
 
 export default function App({ navigation, route }: any) {
   const relatorio = route.params?.relatorio;
@@ -507,338 +518,352 @@ export default function App({ navigation, route }: any) {
   }
 
   return (
-    <ScrollView style={styles.container}>
-      {/* CABEÇALHO */}
-      <View style={styles.header}>
-        <Text style={[styles.subtitle, { marginBottom: 15 }]}>Sylvamo</Text>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={100}
+    >
+      <ScrollView
+        style={styles.container}
+        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={{ paddingBottom: 20 }}
+      >
+        {/* CABEÇALHO */}
+        <View style={styles.header}>
+          <Text style={[styles.subtitle, { marginBottom: 15 }]}>Sylvamo</Text>
 
-        <Text style={styles.title}>RELATÓRIO DIGITAL DE INSPEÇÃO TÉCNICA</Text>
-      </View>
+          <Text style={styles.title}>RELATÓRIO DIGITAL DE INSPEÇÃO TÉCNICA</Text>
+        </View>
 
-      {/* IDENTIFICAÇÃO */}
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionText}>TÍTULO DA INSPEÇÃO</Text>
-      </View>
-      <TextInput
-        style={styles.input}
-        placeholder="TÍTULO DA INSPEÇÃO"
-        placeholderTextColor="#ababab"
-        value={tituloInspecao}
-        onChangeText={setTituloInspecao}
-      />
-
-      {/* IDENTIFICAÇÃO */}
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionText}>DADOS DA INSPEÇÃO</Text>
-      </View>
-
-      <View style={{ marginBottom: 15, marginTop: 10 }}>
-        <Text style={styles.label}>Tipo de inspeção:</Text>
+        {/* IDENTIFICAÇÃO */}
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionText}>TÍTULO DA INSPEÇÃO</Text>
+        </View>
         <TextInput
           style={styles.input}
+          placeholder="TÍTULO DA INSPEÇÃO"
           placeholderTextColor="#ababab"
-          value={tipoInspecao}
-          onChangeText={setArea}
+          value={tituloInspecao}
+          onChangeText={setTituloInspecao}
         />
-      </View>
 
-      <View style={{ marginBottom: 15, marginTop: 10 }}>
-        <Text style={styles.label}>Data da inspeção:</Text>
-        <TextInput
-          style={[styles.input, erroData1 && styles.inputError]}
-          placeholder="(DD/MM/AAAA)"
-          placeholderTextColor="#ababab"
-          keyboardType="numeric"
-          value={data1}
-          onChangeText={(text) => {
-            setData1(formatDate(text));
-            setErroData1(false);
-          }}
-        />
-      </View>
+        {/* IDENTIFICAÇÃO */}
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionText}>DADOS DA INSPEÇÃO</Text>
+        </View>
 
-      <View style={{ marginBottom: 15, marginTop: 10 }}>
-        <Text style={styles.label}>Data da próxima inspeção:</Text>
-        <TextInput
-          style={[styles.input, erroData2 && styles.inputError]}
-          placeholder="(DD/MM/AAAA)"
-          placeholderTextColor="#ababab"
-          keyboardType="numeric"
-          value={data2}
-          onChangeText={(text) => {
-            setData2(formatDate(text));
-            setErroData2(false);
-          }}
-        />
-      </View>
+        <View style={{ marginBottom: 15, marginTop: 10 }}>
+          <Text style={styles.label}>Tipo de inspeção:</Text>
+          <TextInput
+            style={styles.input}
+            placeholderTextColor="#ababab"
+            value={tipoInspecao}
+            onChangeText={setArea}
+          />
+        </View>
 
-      <View style={{ marginBottom: 15, marginTop: 10 }}>
-        <Text style={styles.label}>Nome do inspetor:</Text>
-        <TextInput
-          style={styles.input}
-          placeholderTextColor="#ababab"
-          value={responsavel}
-          onChangeText={setResponsavel}
-        />
-      </View>
+        <View style={{ marginBottom: 15, marginTop: 10 }}>
+          <Text style={styles.label}>Data da inspeção:</Text>
+          <TextInput
+            style={[styles.input, erroData1 && styles.inputError]}
+            placeholder="(DD/MM/AAAA)"
+            placeholderTextColor="#ababab"
+            keyboardType="numeric"
+            value={data1}
+            onChangeText={(text) => {
+              setData1(formatDate(text));
+              setErroData1(false);
+            }}
+          />
+        </View>
 
-      {/* EQUIPAMENTO */}
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionText}>DADOS DO EQUIPAMENTO</Text>
-      </View>
+        <View style={{ marginBottom: 15, marginTop: 10 }}>
+          <Text style={styles.label}>Data da próxima inspeção:</Text>
+          <TextInput
+            style={[styles.input, erroData2 && styles.inputError]}
+            placeholder="(DD/MM/AAAA)"
+            placeholderTextColor="#ababab"
+            keyboardType="numeric"
+            value={data2}
+            onChangeText={(text) => {
+              setData2(formatDate(text));
+              setErroData2(false);
+            }}
+          />
+        </View>
 
-      <View style={{ marginBottom: 15, marginTop: 10 }}>
-        <Text style={styles.label}>FN do equipamento:</Text>
-        <TextInput
-          style={styles.input}
-          placeholderTextColor="#ababab"
-          value={fnEquipamento}
-          onChangeText={setFnEquipamento}
-        />
-      </View>
+        <View style={{ marginBottom: 15, marginTop: 10 }}>
+          <Text style={styles.label}>Nome do inspetor:</Text>
+          <TextInput
+            style={styles.input}
+            placeholderTextColor="#ababab"
+            value={responsavel}
+            onChangeText={setResponsavel}
+          />
+        </View>
 
-      <View style={{ marginBottom: 15, marginTop: 10 }}>
-        <Text style={styles.label}>Nome do equipamento ou rota:</Text>
-        <TextInput
-          style={styles.input}
-          placeholderTextColor="#ababab"
-          value={nomeEquipamento}
-          onChangeText={setnomeEquipamento}
-        />
-      </View>
+        {/* EQUIPAMENTO */}
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionText}>DADOS DO EQUIPAMENTO</Text>
+        </View>
 
-      <View style={{ marginBottom: 15, marginTop: 10 }}>
-        <Text style={styles.label}> Local da instalação: </Text>
-        <TextInput
-          style={styles.input}
-          placeholderTextColor="#ababab"
-          value={localInstalacao}
-          onChangeText={setLocalInstalacao}
-        />
-      </View>
+        <View style={{ marginBottom: 15, marginTop: 10 }}>
+          <Text style={styles.label}>FN do equipamento:</Text>
+          <TextInput
+            style={styles.input}
+            placeholderTextColor="#ababab"
+            value={fnEquipamento}
+            onChangeText={setFnEquipamento}
+          />
+        </View>
 
-      <View style={{ marginBottom: 15, marginTop: 10 }}>
-        <Text style={styles.label}> Plano </Text>
-        <TextInput
-          style={styles.input}
-          placeholderTextColor="#ababab"
-          value={plano}
-          onChangeText={setPlano}
-        />
-      </View>
+        <View style={{ marginBottom: 15, marginTop: 10 }}>
+          <Text style={styles.label}>Nome do equipamento ou rota:</Text>
+          <TextInput
+            style={styles.input}
+            placeholderTextColor="#ababab"
+            value={nomeEquipamento}
+            onChangeText={setnomeEquipamento}
+          />
+        </View>
 
-      <View style={{ marginBottom: 15, marginTop: 10 }}>
-        <Text style={styles.label}> Lista de tarefas: </Text>
-        <TextInput
-          style={styles.input}
-          placeholderTextColor="#ababab"
-          value={listaTarefas}
-          onChangeText={setListaTarefas}
-        />
-      </View>
-      {/* OBJETIVOS */}
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionText}>OBJETIVOS DA INSPEÇÃO</Text>
-      </View>
+        <View style={{ marginBottom: 15, marginTop: 10 }}>
+          <Text style={styles.label}> Local da instalação: </Text>
+          <TextInput
+            style={styles.input}
+            placeholderTextColor="#ababab"
+            value={localInstalacao}
+            onChangeText={setLocalInstalacao}
+          />
+        </View>
 
-      <View style={styles.fixedBox}>
-        <Text style={styles.fixedText}>
-          Realizar a avaliação técnica das condições operacionais e estruturais do item
-          inspecionado, visando à identificação sistemática de não conformidades, anomalias ou
-          desvios em relação aos requisitos normativos e de segurança aplicáveis.
-        </Text>
-      </View>
-      {/* ESCOPOS DA INSPEÇÃO */}
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionText}>ESCOPOS DA INSPEÇÃO</Text>
-      </View>
+        <View style={{ marginBottom: 15, marginTop: 10 }}>
+          <Text style={styles.label}> Plano </Text>
+          <TextInput
+            style={styles.input}
+            placeholderTextColor="#ababab"
+            value={plano}
+            onChangeText={setPlano}
+          />
+        </View>
 
-      {escopos.map((item, index) => (
-        <View key={item.id} style={styles.escopoBox}>
-          <View>
-            <Text style={styles.escopoTitle}>Item {index + 1}</Text>
+        <View style={{ marginBottom: 15, marginTop: 10 }}>
+          <Text style={styles.label}> Lista de tarefas: </Text>
+          <TextInput
+            style={styles.input}
+            placeholderTextColor="#ababab"
+            value={listaTarefas}
+            onChangeText={setListaTarefas}
+          />
+        </View>
+        {/* OBJETIVOS */}
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionText}>OBJETIVOS DA INSPEÇÃO</Text>
+        </View>
 
-            <TextInput
-              style={styles.input}
-              placeholder="Nome do item inspecionado"
-              value={item.tituloItem}
-              onChangeText={(text) => {
-                const copia = [...escopos];
+        <View style={styles.fixedBox}>
+          <Text style={styles.fixedText}>
+            Realizar a avaliação técnica das condições operacionais e estruturais do item
+            inspecionado, visando à identificação sistemática de não conformidades, anomalias ou
+            desvios em relação aos requisitos normativos e de segurança aplicáveis.
+          </Text>
+        </View>
+        {/* ESCOPOS DA INSPEÇÃO */}
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionText}>ESCOPOS DA INSPEÇÃO</Text>
+        </View>
 
-                copia[index].tituloItem = text;
+        {escopos.map((item, index) => (
+          <View key={item.id} style={styles.escopoBox}>
+            <View>
+              <Text style={styles.escopoTitle}>Item {index + 1}</Text>
 
-                setEscopos(copia);
-              }}
-            />
-          </View>
-
-          <Pressable style={styles.removeEscopoButton} onPress={() => removerEscopo(index)}>
-            <Text style={styles.removeEscopoText}>Remover item</Text>
-          </Pressable>
-
-          <Pressable style={styles.photoButton} onPress={() => escolherImagem(index)}>
-            <Text style={styles.photoButtonText}>Adicionar foto</Text>
-          </Pressable>
-
-          <View style={{ flexDirection: "row", flexWrap: "wrap", marginTop: 10 }}>
-            {item.fotos.map((foto, fotoIndex) => (
-              <View key={fotoIndex} style={{ marginRight: 10, marginBottom: 10 }}>
-                <Pressable onPress={() => setFotoSelecionada(foto)}>
-                  <Image source={{ uri: foto }} style={styles.photoPreview} />
-                </Pressable>
-
-                <Pressable
-                  style={{
-                    backgroundColor: "red",
-                    padding: 4,
-                    marginTop: 4,
-                    alignItems: "center",
-                  }}
-                  onPress={() => {
-                    const copia = [...escopos];
-                    copia[index].fotos.splice(fotoIndex, 1);
-                    setEscopos(copia);
-                  }}
-                >
-                  <Text style={{ color: "white", fontSize: 12 }}>Excluir</Text>
-                </Pressable>
-              </View>
-            ))}
-          </View>
-
-          <View style={styles.statusRow}>
-            <Pressable
-              style={[styles.statusButton, item.status === "conforme" && styles.statusConforme]}
-              onPress={() => {
-                const copia = [...escopos];
-                copia[index].status = "conforme";
-                setEscopos(copia);
-              }}
-            >
-              <Text
-                style={{
-                  color: item.status === "conforme" ? "white" : "#334155",
-                  fontWeight: "600",
-                }}
-              >
-                Conforme
-              </Text>
-            </Pressable>
-
-            <Pressable
-              style={[
-                styles.statusButton,
-                item.status === "nao_conforme" && styles.statusNaoConforme,
-              ]}
-              onPress={() => {
-                const copia = [...escopos];
-                copia[index].status = "nao_conforme";
-                setEscopos(copia);
-              }}
-            >
-              <Text
-                style={{
-                  color: item.status === "nao_conforme" ? "white" : "#334155",
-                  fontWeight: "600",
-                }}
-              >
-                Não conforme
-              </Text>
-            </Pressable>
-          </View>
-
-          {item.status && (
-            <>
               <TextInput
-                style={styles.textArea}
-                placeholder={
-                  item.status === "conforme" ? "Observações" : "Descreva a não conformidade"
-                }
-                placeholderTextColor="#9CA3AF"
-                value={item.observacao}
+                style={styles.input}
+                placeholder="Nome do item inspecionado"
+                value={item.tituloItem}
                 onChangeText={(text) => {
                   const copia = [...escopos];
-                  copia[index].observacao = text;
+
+                  copia[index].tituloItem = text;
+
                   setEscopos(copia);
                 }}
               />
+            </View>
 
-              {item.status === "nao_conforme" && (
+            <Pressable style={styles.removeEscopoButton} onPress={() => removerEscopo(index)}>
+              <Text style={styles.removeEscopoText}>Remover item</Text>
+            </Pressable>
+
+            <Pressable style={styles.photoButton} onPress={() => escolherImagem(index)}>
+              <Text style={styles.photoButtonText}>Adicionar foto</Text>
+            </Pressable>
+
+            <View style={{ flexDirection: "row", flexWrap: "wrap", marginTop: 10 }}>
+              {item.fotos.map((foto, fotoIndex) => (
+                <View key={fotoIndex} style={{ marginRight: 10, marginBottom: 10 }}>
+                  <Pressable onPress={() => setFotoSelecionada(foto)}>
+                    <Image source={{ uri: foto }} style={styles.photoPreview} />
+                  </Pressable>
+
+                  <Pressable
+                    style={{
+                      backgroundColor: "red",
+                      padding: 4,
+                      marginTop: 4,
+                      alignItems: "center",
+                    }}
+                    onPress={() => {
+                      const copia = [...escopos];
+                      copia[index].fotos.splice(fotoIndex, 1);
+                      setEscopos(copia);
+                    }}
+                  >
+                    <Text style={{ color: "white", fontSize: 12 }}>Excluir</Text>
+                  </Pressable>
+                </View>
+              ))}
+            </View>
+
+            <View style={styles.statusRow}>
+              <Pressable
+                style={[styles.statusButton, item.status === "conforme" && styles.statusConforme]}
+                onPress={() => {
+                  const copia = [...escopos];
+                  copia[index].status = "conforme";
+                  setEscopos(copia);
+                }}
+              >
+                <Text
+                  style={{
+                    color: item.status === "conforme" ? "white" : "#334155",
+                    fontWeight: "600",
+                  }}
+                >
+                  Conforme
+                </Text>
+              </Pressable>
+
+              <Pressable
+                style={[
+                  styles.statusButton,
+                  item.status === "nao_conforme" && styles.statusNaoConforme,
+                ]}
+                onPress={() => {
+                  const copia = [...escopos];
+                  copia[index].status = "nao_conforme";
+                  setEscopos(copia);
+                }}
+              >
+                <Text
+                  style={{
+                    color: item.status === "nao_conforme" ? "white" : "#334155",
+                    fontWeight: "600",
+                  }}
+                >
+                  Não conforme
+                </Text>
+              </Pressable>
+            </View>
+
+            {item.status && (
+              <>
                 <TextInput
+                  multiline={true}
+                  textAlignVertical="top"
                   style={styles.textArea}
-                  placeholder="Recomendações"
+                  placeholder={
+                    item.status === "conforme" ? "Observações" : "Descreva a não conformidade"
+                  }
                   placeholderTextColor="#9CA3AF"
-                  value={item.recomendacao}
+                  value={item.observacao}
                   onChangeText={(text) => {
                     const copia = [...escopos];
-                    copia[index].recomendacao = text;
+                    copia[index].observacao = text;
                     setEscopos(copia);
                   }}
                 />
-              )}
-            </>
-          )}
+
+                {item.status === "nao_conforme" && (
+                  <TextInput
+                    multiline={true}
+                    textAlignVertical="top"
+                    style={styles.textArea}
+                    placeholder="Recomendações"
+                    placeholderTextColor="#9CA3AF"
+                    value={item.recomendacao}
+                    onChangeText={(text) => {
+                      const copia = [...escopos];
+                      copia[index].recomendacao = text;
+                      setEscopos(copia);
+                    }}
+                  />
+                )}
+              </>
+            )}
+          </View>
+        ))}
+        <Pressable style={styles.button} onPress={adicionarEscopo}>
+          <Text style={styles.buttonText}>+ Adicionar item de inspeção</Text>
+        </Pressable>
+
+        {/* ASSINATURAS */}
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionText}>ASSINATURAS</Text>
         </View>
-      ))}
-      <Pressable style={styles.button} onPress={adicionarEscopo}>
-        <Text style={styles.buttonText}>+ Adicionar item de inspeção</Text>
-      </Pressable>
 
-      {/* ASSINATURAS */}
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionText}>ASSINATURAS</Text>
-      </View>
-
-      <Pressable style={styles.signature} onPress={() => setAssinando(true)}>
-        {assinatura ? (
-          <Image
-            source={{ uri: assinatura }}
-            style={{ width: "100%", height: "100%" }}
-            resizeMode="stretch"
-          />
-        ) : (
-          <Text>Toque para assinar</Text>
-        )}
-      </Pressable>
-
-      <Text style={styles.signatureLabel}>Responsável</Text>
-
-      <Modal visible={fotoSelecionada !== null} transparent={true}>
-        <Pressable
-          style={{
-            flex: 1,
-            backgroundColor: "rgba(0,0,0,0.9)",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-          onPress={() => setFotoSelecionada(null)}
-        >
-          {fotoSelecionada && (
+        <Pressable style={styles.signature} onPress={() => setAssinando(true)}>
+          {assinatura ? (
             <Image
-              source={{ uri: fotoSelecionada }}
-              style={{
-                width: "95%",
-                height: "80%",
-                resizeMode: "contain",
-              }}
+              source={{ uri: assinatura }}
+              style={{ width: "100%", height: "100%" }}
+              resizeMode="stretch"
             />
+          ) : (
+            <Text>Toque para assinar</Text>
           )}
         </Pressable>
-      </Modal>
 
-      <View style={{ marginTop: 30 }}>
-        <Pressable style={styles.button} onPress={salvarRelatorio}>
-          <Text style={styles.buttonText}>Salvar relatório</Text>
-        </Pressable>
+        <Text style={styles.signatureLabel}>Responsável</Text>
 
-        <Pressable
-          style={[styles.button, { backgroundColor: podeFinalizar() ? "#e80303" : "#999" }]}
-          disabled={!podeFinalizar()}
-          onPress={confirmarFinalizacao}
-        >
-          <Text style={styles.buttonText}>Finalizar relatório</Text>
-        </Pressable>
-      </View>
-    </ScrollView>
+        <Modal visible={fotoSelecionada !== null} transparent={true}>
+          <Pressable
+            style={{
+              flex: 1,
+              backgroundColor: "rgba(0,0,0,0.9)",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            onPress={() => setFotoSelecionada(null)}
+          >
+            {fotoSelecionada && (
+              <Image
+                source={{ uri: fotoSelecionada }}
+                style={{
+                  width: "95%",
+                  height: "80%",
+                  resizeMode: "contain",
+                }}
+              />
+            )}
+          </Pressable>
+        </Modal>
+
+        <View style={{ marginTop: 30 }}>
+          <Pressable style={styles.button} onPress={salvarRelatorio}>
+            <Text style={styles.buttonText}>Salvar relatório</Text>
+          </Pressable>
+
+          <Pressable
+            style={[styles.button, { backgroundColor: podeFinalizar() ? "#f24949" : "#999" }]}
+            disabled={!podeFinalizar()}
+            onPress={confirmarFinalizacao}
+          >
+            <Text style={styles.buttonText}>Finalizar relatório</Text>
+          </Pressable>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }

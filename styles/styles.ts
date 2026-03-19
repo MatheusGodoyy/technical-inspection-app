@@ -74,14 +74,14 @@ export const styles = StyleSheet.create({
     lineHeight: 23,
   },
   button: {
-    backgroundColor: "#4CAF50",
+    backgroundColor: "#97f99b",
     padding: 14,
     borderRadius: 6,
     marginTop: 20,
     alignItems: "center",
   },
   buttonText: {
-    color: "#fff",
+    color: "#000000",
     fontWeight: "bold",
   },
   inputError: {
@@ -121,7 +121,7 @@ export const styles = StyleSheet.create({
     marginTop: 8,
     marginBottom: 8,
     padding: 10,
-    backgroundColor: "#85c1fd",
+    backgroundColor: "#b9b9b9",
     borderRadius: 4,
     alignItems: "center",
   },
@@ -140,7 +140,7 @@ export const styles = StyleSheet.create({
     marginTop: 12,
     padding: 10,
     borderRadius: 4,
-    backgroundColor: "#f8d7da",
+    backgroundColor: "#f24949",
     alignItems: "center",
   },
 
@@ -157,10 +157,10 @@ export const styles = StyleSheet.create({
   },
 
   statusConforme: {
-    backgroundColor: "#86e98a", // verde
+    backgroundColor: "#97f99b", // verde
   },
 
   statusNaoConforme: {
-    backgroundColor: "#f59998", // vermelho
+    backgroundColor: "#f24949", // vermelho
   },
 });
