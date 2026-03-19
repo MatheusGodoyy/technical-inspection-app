@@ -692,33 +692,65 @@ export default function App({ navigation, route }: any) {
               />
             </View>
 
-            <Pressable style={styles.removeEscopoButton} onPress={() => removerEscopo(index)}>
+            <Pressable
+              onPress={() => removerEscopo(index)}
+              style={({ pressed }) => [
+                styles.removeEscopoButton,
+                pressed && {
+                  opacity: 0.7,
+                  transform: [{ scale: 0.96 }],
+                },
+              ]}
+            >
               <Text style={styles.removeEscopoText}>Remover item</Text>
             </Pressable>
 
-            <Pressable style={styles.photoButton} onPress={() => escolherImagem(index)}>
+            <Pressable
+              onPress={() => escolherImagem(index)}
+              style={({ pressed }) => [
+                styles.photoButton,
+                pressed && {
+                  opacity: 0.7,
+                  transform: [{ scale: 0.97 }],
+                },
+              ]}
+            >
               <Text style={styles.photoButtonText}>Adicionar foto</Text>
             </Pressable>
 
             <View style={{ flexDirection: "row", flexWrap: "wrap", marginTop: 10 }}>
               {item.fotos.map((foto, fotoIndex) => (
                 <View key={fotoIndex} style={{ marginRight: 10, marginBottom: 10 }}>
-                  <Pressable onPress={() => setFotoSelecionada(foto)}>
+                  <Pressable
+                    onPress={() => setFotoSelecionada(foto)}
+                    style={({ pressed }) => [
+                      pressed && {
+                        opacity: 0.8,
+                        transform: [{ scale: 0.98 }],
+                      },
+                    ]}
+                  >
                     <Image source={{ uri: foto }} style={styles.photoPreview} />
                   </Pressable>
 
                   <Pressable
-                    style={{
-                      backgroundColor: "red",
-                      padding: 4,
-                      marginTop: 4,
-                      alignItems: "center",
-                    }}
                     onPress={() => {
                       const copia = [...escopos];
                       copia[index].fotos.splice(fotoIndex, 1);
                       setEscopos(copia);
                     }}
+                    style={({ pressed }) => [
+                      {
+                        backgroundColor: pressed ? "#b71c1c" : "red", // mais escuro ao clicar
+                        padding: 4,
+                        marginTop: 4,
+                        alignItems: "center",
+                        borderRadius: 4,
+                      },
+                      pressed && {
+                        transform: [{ scale: 0.95 }],
+                      },
+                    ]}
                   >
                     <Text style={{ color: "white", fontSize: 12 }}>Excluir</Text>
                   </Pressable>
@@ -804,7 +836,16 @@ export default function App({ navigation, route }: any) {
             )}
           </View>
         ))}
-        <Pressable style={styles.button} onPress={adicionarEscopo}>
+        <Pressable
+          onPress={adicionarEscopo}
+          style={({ pressed }) => [
+            styles.button,
+            pressed && {
+              opacity: 0.7,
+              transform: [{ scale: 0.97 }],
+            },
+          ]}
+        >
           <Text style={styles.buttonText}>+ Adicionar item de inspeção</Text>
         </Pressable>
 
@@ -813,7 +854,16 @@ export default function App({ navigation, route }: any) {
           <Text style={styles.sectionText}>ASSINATURAS</Text>
         </View>
 
-        <Pressable style={styles.signature} onPress={() => setAssinando(true)}>
+        <Pressable
+          onPress={() => setAssinando(true)}
+          style={({ pressed }) => [
+            styles.signature,
+            pressed && {
+              opacity: 0.8,
+              transform: [{ scale: 0.98 }],
+            },
+          ]}
+        >
           {assinatura ? (
             <Image
               source={{ uri: assinatura }}
@@ -829,13 +879,17 @@ export default function App({ navigation, route }: any) {
 
         <Modal visible={fotoSelecionada !== null} transparent={true}>
           <Pressable
-            style={{
-              flex: 1,
-              backgroundColor: "rgba(0,0,0,0.9)",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
             onPress={() => setFotoSelecionada(null)}
+            style={({ pressed }) => [
+              {
+                flex: 1,
+                backgroundColor: pressed
+                  ? "rgba(0,0,0,0.7)" // um pouco mais claro ao clicar
+                  : "rgba(0,0,0,0.9)",
+                justifyContent: "center",
+                alignItems: "center",
+              },
+            ]}
           >
             {fotoSelecionada && (
               <Image
@@ -851,14 +905,31 @@ export default function App({ navigation, route }: any) {
         </Modal>
 
         <View style={{ marginTop: 30 }}>
-          <Pressable style={styles.button} onPress={salvarRelatorio}>
+          <Pressable
+            onPress={salvarRelatorio}
+            style={({ pressed }) => [
+              styles.button,
+              pressed && {
+                opacity: 0.7,
+                transform: [{ scale: 0.97 }],
+              },
+            ]}
+          >
             <Text style={styles.buttonText}>Salvar relatório</Text>
           </Pressable>
 
           <Pressable
-            style={[styles.button, { backgroundColor: podeFinalizar() ? "#f24949" : "#999" }]}
-            disabled={!podeFinalizar()}
             onPress={confirmarFinalizacao}
+            disabled={!podeFinalizar()}
+            style={({ pressed }) => [
+              styles.button,
+              { backgroundColor: podeFinalizar() ? "#f24949" : "#999" },
+              pressed &&
+                podeFinalizar() && {
+                  opacity: 0.7,
+                  transform: [{ scale: 0.97 }],
+                },
+            ]}
           >
             <Text style={styles.buttonText}>Finalizar relatório</Text>
           </Pressable>
