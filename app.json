@@ -14,7 +14,10 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.sylvamo.inspecao",
-      "buildNumber": "1.0.0"
+      "buildNumber": "1.0.0",
+      "infoPlist": {
+        "NSPhotoLibraryAddUsageDescription": "Precisamos salvar fotos na sua galeria"
+      }
     },
     "android": {
       "package": "com.sylvamo.inspecao",
@@ -28,7 +31,9 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": ["expo-sqlite"],
+    "plugins": [
+      "expo-sqlite"
+    ],
     "extra": {
       "eas": {
         "projectId": "4d5e5109-384f-4ca9-9902-d02726f2292e"

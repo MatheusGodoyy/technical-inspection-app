@@ -8,11 +8,9 @@ export const pdfStyles = `
 /* CABEÇALHO */
 
 .header {
-  display: table;
-  width: 100%;
-  border-bottom: 2px solid #ccc;
-  margin-bottom: 20px;
-  padding-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .header-left {
@@ -22,16 +20,15 @@ export const pdfStyles = `
 }
 
 .header-center {
-  display: table-cell;
+  flex: 1;
   text-align: center;
-  vertical-align: middle;
-  font-size: 20px;
   font-weight: bold;
+  font-size: 16px;
 }
 
 .header-right {
-  font-size: 10px;
   text-align: right;
+  font-size: 12px;
 }
 
 .header-right p {

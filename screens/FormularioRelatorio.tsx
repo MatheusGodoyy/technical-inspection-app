@@ -8,6 +8,7 @@ import db from "../database/database";
 import { gerarPDF } from "../services/pdfService";
 import { sincronizar } from "../services/syncService.js";
 import { styles } from "../styles/styles";
+import * as MediaLibrary from 'expo-media-library';
 
 export default function App({ navigation, route }: any) {
   const relatorio = route.params?.relatorio;
@@ -234,8 +235,17 @@ export default function App({ navigation, route }: any) {
   const tirarFoto = async (index: number) => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
 
+    // Permissão da câmera
     if (status !== "granted") {
       Alert.alert("Permissão necessária", "Precisamos da câmera");
+      return;
+    }
+
+    // Permissão da galeria
+    const { status: mediaStatus } = await MediaLibrary.requestPermissionsAsync();
+
+    if (mediaStatus !== "granted") {
+      Alert.alert("Permissão necessária", "Precisamos acessar a galeria");
       return;
     }
 
@@ -245,9 +255,13 @@ export default function App({ navigation, route }: any) {
     });
 
     if (!result.canceled) {
-      const copia = [...escopos];
+      const uri = result.assets[0].uri;
 
-      copia[index].fotos.push(result.assets[0].uri);
+      // SALVA NA GALERIA
+      await MediaLibrary.saveToLibraryAsync(uri);
+
+      const copia = [...escopos];
+      copia[index].fotos.push(uri);
 
       setEscopos(copia);
     }
@@ -498,7 +512,7 @@ export default function App({ navigation, route }: any) {
       <View style={styles.header}>
         <Text style={[styles.subtitle, { marginBottom: 15 }]}>Sylvamo</Text>
 
-      <Text style={styles.title}>RELATÓRIO DIGITAL DE INSPEÇÃO TÉCNICA</Text>
+        <Text style={styles.title}>RELATÓRIO DIGITAL DE INSPEÇÃO TÉCNICA</Text>
       </View>
 
       {/* IDENTIFICAÇÃO */}
