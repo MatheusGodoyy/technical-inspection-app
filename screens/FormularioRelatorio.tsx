@@ -107,6 +107,7 @@ export default function App({ navigation, route }: any) {
       const resultado = await gerarPDF({
         tituloInspecao,
         tipoInspecao,
+        unidade,
         data1,
         data2,
         responsavel,

@@ -10,6 +10,7 @@ export const criarTabelas = async () => {
 
             titulo_inspecao TEXT,
             tipo_inspecao TEXT,
+            unidade TEXT,
             data_inspecao TEXT,
             proxima_inspecao TEXT,
             responsavel TEXT,

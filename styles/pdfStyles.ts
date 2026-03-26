@@ -13,11 +13,11 @@ export const pdfStyles = `
   align-items: center;
 }
 
-.header-left {
-  display: table-cell;
-  vertical-align: middle;
-  width: 120px;
+.header-left img {
+  width: 150px;
+  height: auto;
 }
+
 
 .header-center {
   flex: 1;
