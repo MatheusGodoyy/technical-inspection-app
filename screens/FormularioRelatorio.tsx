@@ -5,21 +5,15 @@ import * as Network from "expo-network";
 import { useEffect, useRef, useState } from "react";
 import {
   Alert,
-  Image,
-  KeyboardAvoidingView,
-  Modal,
-  Platform,
   Pressable,
-  ScrollView,
   Text,
-  TextInput,
   View,
 } from "react-native";
 import Signature from "react-native-signature-canvas";
 import db from "../database/database";
 import { gerarPDF } from "../services/pdfService";
 import { sincronizar } from "../services/syncService.js";
-import { styles } from "../styles/styles";
+import FormularioInspecao from "../screens/FormularioRelatorioUI";
 
 export default function App({ navigation, route }: any) {
   const relatorio = route.params?.relatorio;
@@ -38,10 +32,10 @@ export default function App({ navigation, route }: any) {
   const [localInstalacao, setLocalInstalacao] = useState("");
   const [plano, setPlano] = useState("");
   const [listaTarefas, setListaTarefas] = useState("");
-  const [observacoes, setObservacoes] = useState("");
   const [erroData1, setErroData1] = useState(false);
   const [erroData2, setErroData2] = useState(false);
   const [fotoSelecionada, setFotoSelecionada] = useState<string | null>(null);
+  const [unidade, setUnidade] = useState("");
 
   const formatDate = (text: string) => {
     let cleaned = text.replace(/\D/g, "");
@@ -143,6 +137,7 @@ export default function App({ navigation, route }: any) {
         `INSERT INTO inspecoes (
                 titulo_inspecao,
                 tipo_inspecao,
+                unidade,
                 data_inspecao,
                 proxima_inspecao,
                 responsavel,
@@ -162,10 +157,11 @@ export default function App({ navigation, route }: any) {
                 path_pdf,
                 status_sync
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           tituloInspecao,
           tipoInspecao,
+          unidade,
           data1,
           data2,
           responsavel,
@@ -325,6 +321,7 @@ export default function App({ navigation, route }: any) {
       status: "aberto",
       tituloInspecao,
       tipoInspecao,
+      unidade,
       data1,
       data2,
       responsavel,
@@ -352,6 +349,7 @@ export default function App({ navigation, route }: any) {
     setRelatorioAtualId(relatorio.id);
     setTituloInspecao(relatorio.tituloInspecao);
     setArea(relatorio.tipoInspecao);
+    setUnidade(relatorio.unidade);
     setData1(relatorio.data1);
     setData2(relatorio.data2);
     setResponsavel(relatorio.responsavel);
@@ -463,6 +461,7 @@ export default function App({ navigation, route }: any) {
     return (
       tituloInspecao.trim() &&
       tipoInspecao.trim() &&
+      unidade.trim() &&
       data1.trim() &&
       data2.trim() &&
       responsavel.trim() &&
@@ -516,425 +515,47 @@ export default function App({ navigation, route }: any) {
       </View>
     );
   }
-
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={100}
-    >
-      <ScrollView
-        style={styles.container}
-        keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{ paddingBottom: 20 }}
-      >
-        {/* CABEÇALHO */}
-        <View style={styles.header}>
-          <Text style={[styles.subtitle, { marginBottom: 15 }]}>Sylvamo</Text>
-
-          <Text style={styles.title}>RELATÓRIO DIGITAL DE INSPEÇÃO TÉCNICA</Text>
-        </View>
-
-        {/* IDENTIFICAÇÃO */}
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionText}>TÍTULO DA INSPEÇÃO</Text>
-        </View>
-        <TextInput
-          style={styles.input}
-          placeholder="TÍTULO DA INSPEÇÃO"
-          placeholderTextColor="#ababab"
-          value={tituloInspecao}
-          onChangeText={setTituloInspecao}
-        />
-
-        {/* IDENTIFICAÇÃO */}
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionText}>DADOS DA INSPEÇÃO</Text>
-        </View>
-
-        <View style={{ marginBottom: 15, marginTop: 10 }}>
-          <Text style={styles.label}>Tipo de inspeção:</Text>
-          <TextInput
-            style={styles.input}
-            placeholderTextColor="#ababab"
-            value={tipoInspecao}
-            onChangeText={setArea}
-          />
-        </View>
-
-        <View style={{ marginBottom: 15, marginTop: 10 }}>
-          <Text style={styles.label}>Data da inspeção:</Text>
-          <TextInput
-            style={[styles.input, erroData1 && styles.inputError]}
-            placeholder="(DD/MM/AAAA)"
-            placeholderTextColor="#ababab"
-            keyboardType="numeric"
-            value={data1}
-            onChangeText={(text) => {
-              setData1(formatDate(text));
-              setErroData1(false);
-            }}
-          />
-        </View>
-
-        <View style={{ marginBottom: 15, marginTop: 10 }}>
-          <Text style={styles.label}>Data da próxima inspeção:</Text>
-          <TextInput
-            style={[styles.input, erroData2 && styles.inputError]}
-            placeholder="(DD/MM/AAAA)"
-            placeholderTextColor="#ababab"
-            keyboardType="numeric"
-            value={data2}
-            onChangeText={(text) => {
-              setData2(formatDate(text));
-              setErroData2(false);
-            }}
-          />
-        </View>
-
-        <View style={{ marginBottom: 15, marginTop: 10 }}>
-          <Text style={styles.label}>Nome do inspetor:</Text>
-          <TextInput
-            style={styles.input}
-            placeholderTextColor="#ababab"
-            value={responsavel}
-            onChangeText={setResponsavel}
-          />
-        </View>
-
-        {/* EQUIPAMENTO */}
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionText}>DADOS DO EQUIPAMENTO</Text>
-        </View>
-
-        <View style={{ marginBottom: 15, marginTop: 10 }}>
-          <Text style={styles.label}>FN do equipamento:</Text>
-          <TextInput
-            style={styles.input}
-            placeholderTextColor="#ababab"
-            value={fnEquipamento}
-            onChangeText={setFnEquipamento}
-          />
-        </View>
-
-        <View style={{ marginBottom: 15, marginTop: 10 }}>
-          <Text style={styles.label}>Nome do equipamento ou rota:</Text>
-          <TextInput
-            style={styles.input}
-            placeholderTextColor="#ababab"
-            value={nomeEquipamento}
-            onChangeText={setnomeEquipamento}
-          />
-        </View>
-
-        <View style={{ marginBottom: 15, marginTop: 10 }}>
-          <Text style={styles.label}> Local da instalação: </Text>
-          <TextInput
-            style={styles.input}
-            placeholderTextColor="#ababab"
-            value={localInstalacao}
-            onChangeText={setLocalInstalacao}
-          />
-        </View>
-
-        <View style={{ marginBottom: 15, marginTop: 10 }}>
-          <Text style={styles.label}> Plano </Text>
-          <TextInput
-            style={styles.input}
-            placeholderTextColor="#ababab"
-            value={plano}
-            onChangeText={setPlano}
-          />
-        </View>
-
-        <View style={{ marginBottom: 15, marginTop: 10 }}>
-          <Text style={styles.label}> Lista de tarefas: </Text>
-          <TextInput
-            style={styles.input}
-            placeholderTextColor="#ababab"
-            value={listaTarefas}
-            onChangeText={setListaTarefas}
-          />
-        </View>
-        {/* OBJETIVOS */}
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionText}>OBJETIVOS DA INSPEÇÃO</Text>
-        </View>
-
-        <View style={styles.fixedBox}>
-          <Text style={styles.fixedText}>
-            Realizar a avaliação técnica das condições operacionais e estruturais do item
-            inspecionado, visando à identificação sistemática de não conformidades, anomalias ou
-            desvios em relação aos requisitos normativos e de segurança aplicáveis.
-          </Text>
-        </View>
-        {/* ESCOPOS DA INSPEÇÃO */}
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionText}>ESCOPOS DA INSPEÇÃO</Text>
-        </View>
-
-        {escopos.map((item, index) => (
-          <View key={item.id} style={styles.escopoBox}>
-            <View>
-              <Text style={styles.escopoTitle}>Item {index + 1}</Text>
-
-              <TextInput
-                style={styles.input}
-                placeholder="Nome do item inspecionado"
-                value={item.tituloItem}
-                onChangeText={(text) => {
-                  const copia = [...escopos];
-
-                  copia[index].tituloItem = text;
-
-                  setEscopos(copia);
-                }}
-              />
-            </View>
-
-            <Pressable
-              onPress={() => removerEscopo(index)}
-              style={({ pressed }) => [
-                styles.removeEscopoButton,
-                pressed && {
-                  opacity: 0.7,
-                  transform: [{ scale: 0.96 }],
-                },
-              ]}
-            >
-              <Text style={styles.removeEscopoText}>Remover item</Text>
-            </Pressable>
-
-            <Pressable
-              onPress={() => escolherImagem(index)}
-              style={({ pressed }) => [
-                styles.photoButton,
-                pressed && {
-                  opacity: 0.7,
-                  transform: [{ scale: 0.97 }],
-                },
-              ]}
-            >
-              <Text style={styles.photoButtonText}>Adicionar foto</Text>
-            </Pressable>
-
-            <View style={{ flexDirection: "row", flexWrap: "wrap", marginTop: 10 }}>
-              {item.fotos.map((foto, fotoIndex) => (
-                <View key={fotoIndex} style={{ marginRight: 10, marginBottom: 10 }}>
-                  <Pressable
-                    onPress={() => setFotoSelecionada(foto)}
-                    style={({ pressed }) => [
-                      pressed && {
-                        opacity: 0.8,
-                        transform: [{ scale: 0.98 }],
-                      },
-                    ]}
-                  >
-                    <Image source={{ uri: foto }} style={styles.photoPreview} />
-                  </Pressable>
-
-                  <Pressable
-                    onPress={() => {
-                      const copia = [...escopos];
-                      copia[index].fotos.splice(fotoIndex, 1);
-                      setEscopos(copia);
-                    }}
-                    style={({ pressed }) => [
-                      {
-                        backgroundColor: pressed ? "#b71c1c" : "red", // mais escuro ao clicar
-                        padding: 4,
-                        marginTop: 4,
-                        alignItems: "center",
-                        borderRadius: 4,
-                      },
-                      pressed && {
-                        transform: [{ scale: 0.95 }],
-                      },
-                    ]}
-                  >
-                    <Text style={{ color: "white", fontSize: 12 }}>Excluir</Text>
-                  </Pressable>
-                </View>
-              ))}
-            </View>
-
-            <View style={styles.statusRow}>
-              <Pressable
-                style={[styles.statusButton, item.status === "conforme" && styles.statusConforme]}
-                onPress={() => {
-                  const copia = [...escopos];
-                  copia[index].status = "conforme";
-                  setEscopos(copia);
-                }}
-              >
-                <Text
-                  style={{
-                    color: item.status === "conforme" ? "white" : "#334155",
-                    fontWeight: "600",
-                  }}
-                >
-                  Conforme
-                </Text>
-              </Pressable>
-
-              <Pressable
-                style={[
-                  styles.statusButton,
-                  item.status === "nao_conforme" && styles.statusNaoConforme,
-                ]}
-                onPress={() => {
-                  const copia = [...escopos];
-                  copia[index].status = "nao_conforme";
-                  setEscopos(copia);
-                }}
-              >
-                <Text
-                  style={{
-                    color: item.status === "nao_conforme" ? "white" : "#334155",
-                    fontWeight: "600",
-                  }}
-                >
-                  Não conforme
-                </Text>
-              </Pressable>
-            </View>
-
-            {item.status && (
-              <>
-                <TextInput
-                  multiline={true}
-                  textAlignVertical="top"
-                  style={styles.textArea}
-                  placeholder={
-                    item.status === "conforme" ? "Observações" : "Descreva a não conformidade"
-                  }
-                  placeholderTextColor="#9CA3AF"
-                  value={item.observacao}
-                  onChangeText={(text) => {
-                    const copia = [...escopos];
-                    copia[index].observacao = text;
-                    setEscopos(copia);
-                  }}
-                />
-
-                {item.status === "nao_conforme" && (
-                  <TextInput
-                    multiline={true}
-                    textAlignVertical="top"
-                    style={styles.textArea}
-                    placeholder="Recomendações"
-                    placeholderTextColor="#9CA3AF"
-                    value={item.recomendacao}
-                    onChangeText={(text) => {
-                      const copia = [...escopos];
-                      copia[index].recomendacao = text;
-                      setEscopos(copia);
-                    }}
-                  />
-                )}
-              </>
-            )}
-          </View>
-        ))}
-        <Pressable
-          onPress={adicionarEscopo}
-          style={({ pressed }) => [
-            styles.button,
-            pressed && {
-              opacity: 0.7,
-              transform: [{ scale: 0.97 }],
-            },
-          ]}
-        >
-          <Text style={styles.buttonText}>+ Adicionar item de inspeção</Text>
-        </Pressable>
-
-        {/* ASSINATURAS */}
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionText}>ASSINATURAS</Text>
-        </View>
-
-        <Pressable
-          onPress={() => setAssinando(true)}
-          style={({ pressed }) => [
-            styles.signature,
-            pressed && {
-              opacity: 0.8,
-              transform: [{ scale: 0.98 }],
-            },
-          ]}
-        >
-          {assinatura ? (
-            <Image
-              source={{ uri: assinatura }}
-              style={{ width: "100%", height: "100%" }}
-              resizeMode="stretch"
-            />
-          ) : (
-            <Text>Toque para assinar</Text>
-          )}
-        </Pressable>
-
-        <Text style={styles.signatureLabel}>Responsável</Text>
-
-        <Modal visible={fotoSelecionada !== null} transparent={true}>
-          <Pressable
-            onPress={() => setFotoSelecionada(null)}
-            style={({ pressed }) => [
-              {
-                flex: 1,
-                backgroundColor: pressed
-                  ? "rgba(0,0,0,0.7)" // um pouco mais claro ao clicar
-                  : "rgba(0,0,0,0.9)",
-                justifyContent: "center",
-                alignItems: "center",
-              },
-            ]}
-          >
-            {fotoSelecionada && (
-              <Image
-                source={{ uri: fotoSelecionada }}
-                style={{
-                  width: "95%",
-                  height: "80%",
-                  resizeMode: "contain",
-                }}
-              />
-            )}
-          </Pressable>
-        </Modal>
-
-        <View style={{ marginTop: 30 }}>
-          <Pressable
-            onPress={salvarRelatorio}
-            style={({ pressed }) => [
-              styles.button,
-              pressed && {
-                opacity: 0.7,
-                transform: [{ scale: 0.97 }],
-              },
-            ]}
-          >
-            <Text style={styles.buttonText}>Salvar relatório</Text>
-          </Pressable>
-
-          <Pressable
-            onPress={confirmarFinalizacao}
-            disabled={!podeFinalizar()}
-            style={({ pressed }) => [
-              styles.button,
-              { backgroundColor: podeFinalizar() ? "#f24949" : "#999" },
-              pressed &&
-                podeFinalizar() && {
-                  opacity: 0.7,
-                  transform: [{ scale: 0.97 }],
-                },
-            ]}
-          >
-            <Text style={styles.buttonText}>Finalizar relatório</Text>
-          </Pressable>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+    <FormularioInspecao
+      tituloInspecao={tituloInspecao}
+      setTituloInspecao={setTituloInspecao}
+      tipoInspecao={tipoInspecao}
+      setArea={setArea}
+      unidade={unidade}
+      setUnidade={setUnidade}
+      data1={data1}
+      setData1={setData1}
+      data2={data2}
+      setData2={setData2}
+      responsavel={responsavel}
+      setResponsavel={setResponsavel}
+      fnEquipamento={fnEquipamento}
+      setFnEquipamento={setFnEquipamento}
+      nomeEquipamento={nomeEquipamento}
+      setnomeEquipamento={setnomeEquipamento}
+      localInstalacao={localInstalacao}
+      setLocalInstalacao={setLocalInstalacao}
+      plano={plano}
+      setPlano={setPlano}
+      listaTarefas={listaTarefas}
+      setListaTarefas={setListaTarefas}
+      escopos={escopos}
+      setEscopos={setEscopos}
+      adicionarEscopo={adicionarEscopo}
+      removerEscopo={removerEscopo}
+      escolherImagem={escolherImagem}
+      assinatura={assinatura}
+      setAssinando={setAssinando}
+      fotoSelecionada={fotoSelecionada}
+      setFotoSelecionada={setFotoSelecionada}
+      salvarRelatorio={salvarRelatorio}
+      confirmarFinalizacao={confirmarFinalizacao}
+      podeFinalizar={podeFinalizar}
+      formatDate={formatDate}
+      erroData1={erroData1}
+      erroData2={erroData2}
+      setErroData1={setErroData1}
+      setErroData2={setErroData2}
+    />
   );
 }

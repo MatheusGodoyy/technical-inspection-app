@@ -30,7 +30,6 @@ export async function gerarPDF(relatorio: any) {
 
                     return `data:image/jpeg;base64,${base64}`;
                   } catch (error) {
-                    console.log("Erro ao processar foto:", foto);
                     return null;
                   }
                 }),
@@ -102,6 +101,7 @@ ${fotosHTML}
 
         <p><b>Título:</b> ${relatorio.tituloInspecao}</p>
         <p><b>Tipo:</b> ${relatorio.tipoInspecao}</p>
+        <p><b>Unidade:</b> ${relatorio.unidade}</p>
         <p><b>Data atual:</b> ${relatorio.data1}</p>
         <p><b>Próxima inspeção:</b> ${relatorio.data2}</p>
         <p><b>Responsável:</b> ${relatorio.responsavel}</p>
@@ -189,7 +189,6 @@ ${fotosHTML}
       path_pdf: caminhoFinal,
     };
   } catch (error) {
-    console.log("ERRO PDF:", error);
     Alert.alert("Erro ao gerar PDF");
   }
 }

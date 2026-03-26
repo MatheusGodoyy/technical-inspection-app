@@ -90,6 +90,7 @@ export const enviarInspecao = async (inspecao) => {
       body: JSON.stringify({
         titulo_inspecao: inspecao.titulo_inspecao,
         tipo_inspecao: inspecao.tipo_inspecao,
+        unidade : inspecao.unidade,
         data_inspecao: dataInspecaoFormatada,
         proxima_inspecao: proximaInspecaoFormatada,
         responsavel: inspecao.responsavel,
@@ -176,3 +177,5 @@ export const temInternet = async () => {
   const state = await Network.getNetworkStateAsync();
   return state.isConnected;
 };
+
+
