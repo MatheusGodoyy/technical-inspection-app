@@ -9,12 +9,11 @@ export const pdfStyles = `
 
 .header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
 }
 
 .header-left img {
-  width: 150px;
+  width: 130px;
   height: auto;
 }
 
@@ -23,7 +22,7 @@ export const pdfStyles = `
   flex: 1;
   text-align: center;
   font-weight: bold;
-  font-size: 16px;
+  font-size: 23px;
 }
 
 .header-right {

@@ -341,7 +341,10 @@ export default function App({ navigation, route }: any) {
 
     await AsyncStorage.setItem("relatorios", JSON.stringify(novaLista));
 
-    Alert.alert("Relatório salvo");
+    Alert.alert(
+      "Relatório salvo 📝",
+      "Este relatório foi salvo como rascunho.\n\nO envio será realizado somente após a finalização."
+    );
   };
 
   useEffect(() => {
@@ -379,7 +382,11 @@ export default function App({ navigation, route }: any) {
       valido = false;
     }
 
-    if (isValidDate(data1) && isValidDate(data2) && !isNextDateAfterCurrent(data1, data2)) {
+    if (
+      isValidDate(data1) &&
+      isValidDate(data2) &&
+      !isNextDateAfterCurrent(data1, data2)
+    ) {
       setErroData2(true);
       valido = false;
     }
@@ -392,22 +399,27 @@ export default function App({ navigation, route }: any) {
     await gerarPDFESalvar();
 
     const dados = await AsyncStorage.getItem("relatorios");
-
     const lista = JSON.parse(dados || "[]");
 
     const novaLista = lista.map((r: any) => {
       if (r.id === relatorioAtualId) {
         return { ...r, status: "finalizado" };
       }
-
       return r;
     });
 
     await AsyncStorage.setItem("relatorios", JSON.stringify(novaLista));
 
-    navigation.navigate("Lista");
-
-    Alert.alert("Relatório finalizado");
+    Alert.alert(
+      "Relatório finalizado ✅",
+      "O envio será feito automaticamente quando houver conexão com a internet.\n\n📌IMPORTANTE: Caso o relatório ainda não tenha sido enviado, ele será enviado automaticamente na próxima vez que você abrir o aplicativo com conexão à internet.",
+      [
+        {
+          text: "OK",
+          onPress: () => navigation.navigate("Lista"),
+        },
+      ]
+    );
   };
 
   const buscarRelatoriosAbertos = async () => {
@@ -450,7 +462,6 @@ export default function App({ navigation, route }: any) {
 
       if (state.isConnected) {
         ultimaTentativa = agora;
-        console.log("Internet detectada - sincronizando...");
         await sincronizar();
       }
     }, 5000);
@@ -493,25 +504,33 @@ export default function App({ navigation, route }: any) {
         />
 
         <Pressable
-          style={{
-            backgroundColor: "#2e7d32",
+          style={({ pressed }) => ({
+            backgroundColor: pressed ? "#1b5e20" : "#2e7d32",
             padding: 15,
             alignItems: "center",
-          }}
+            transform: [{ scale: pressed ? 0.97 : 1 }],
+            opacity: pressed ? 0.85 : 1,
+          })}
           onPress={() => signatureRef.current.readSignature()}
         >
-          <Text style={{ color: "white", fontWeight: "bold" }}>Salvar assinatura</Text>
+          <Text style={{ color: "white", fontWeight: "bold" }}>
+            Salvar assinatura
+          </Text>
         </Pressable>
 
         <Pressable
-          style={{
-            backgroundColor: "#c62828",
+          style={({ pressed }) => ({
+            backgroundColor: pressed ? "#8e0000" : "#c62828",
             padding: 15,
             alignItems: "center",
-          }}
+            transform: [{ scale: pressed ? 0.97 : 1 }],
+            opacity: pressed ? 0.85 : 1,
+          })}
           onPress={() => setAssinando(false)}
         >
-          <Text style={{ color: "white" }}>Cancelar</Text>
+          <Text style={{ color: "white", fontWeight: "bold" }}>
+            Cancelar
+          </Text>
         </Pressable>
       </View>
     );

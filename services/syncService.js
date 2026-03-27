@@ -90,7 +90,7 @@ export const enviarInspecao = async (inspecao) => {
       body: JSON.stringify({
         titulo_inspecao: inspecao.titulo_inspecao,
         tipo_inspecao: inspecao.tipo_inspecao,
-        unidade : inspecao.unidade,
+        unidade: inspecao.unidade,
         data_inspecao: dataInspecaoFormatada,
         proxima_inspecao: proximaInspecaoFormatada,
         responsavel: inspecao.responsavel,
@@ -140,11 +140,6 @@ export const marcarComoErro = async (id) => {
 };
 
 export const sincronizar = async () => {
-  if (sincronizando) {
-    console.log("Sincronização já em andamento...");
-    return;
-  }
-
   sincronizando = true;
 
   try {

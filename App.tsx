@@ -28,7 +28,6 @@ export default function App() {
 
     const subscription = Network.addNetworkStateListener(async (state) => {
       if (state.isConnected) {
-        console.log("Internet voltou, sincronizando...");
         await sincronizar();
       }
     });
