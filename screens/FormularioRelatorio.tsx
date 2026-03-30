@@ -14,6 +14,7 @@ import db from "../database/database";
 import { gerarPDF } from "../services/pdfService";
 import { sincronizar } from "../services/syncService.js";
 import FormularioInspecao from "../screens/FormularioRelatorioUI";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function App({ navigation, route }: any) {
   const relatorio = route.params?.relatorio;
@@ -36,6 +37,7 @@ export default function App({ navigation, route }: any) {
   const [erroData2, setErroData2] = useState(false);
   const [fotoSelecionada, setFotoSelecionada] = useState<string | null>(null);
   const [unidade, setUnidade] = useState("");
+  const insets = useSafeAreaInsets();
 
   const formatDate = (text: string) => {
     let cleaned = text.replace(/\D/g, "");
@@ -536,46 +538,50 @@ export default function App({ navigation, route }: any) {
     );
   }
   return (
-    <FormularioInspecao
-      tituloInspecao={tituloInspecao}
-      setTituloInspecao={setTituloInspecao}
-      tipoInspecao={tipoInspecao}
-      setArea={setArea}
-      unidade={unidade}
-      setUnidade={setUnidade}
-      data1={data1}
-      setData1={setData1}
-      data2={data2}
-      setData2={setData2}
-      responsavel={responsavel}
-      setResponsavel={setResponsavel}
-      fnEquipamento={fnEquipamento}
-      setFnEquipamento={setFnEquipamento}
-      nomeEquipamento={nomeEquipamento}
-      setnomeEquipamento={setnomeEquipamento}
-      localInstalacao={localInstalacao}
-      setLocalInstalacao={setLocalInstalacao}
-      plano={plano}
-      setPlano={setPlano}
-      listaTarefas={listaTarefas}
-      setListaTarefas={setListaTarefas}
-      escopos={escopos}
-      setEscopos={setEscopos}
-      adicionarEscopo={adicionarEscopo}
-      removerEscopo={removerEscopo}
-      escolherImagem={escolherImagem}
-      assinatura={assinatura}
-      setAssinando={setAssinando}
-      fotoSelecionada={fotoSelecionada}
-      setFotoSelecionada={setFotoSelecionada}
-      salvarRelatorio={salvarRelatorio}
-      confirmarFinalizacao={confirmarFinalizacao}
-      podeFinalizar={podeFinalizar}
-      formatDate={formatDate}
-      erroData1={erroData1}
-      erroData2={erroData2}
-      setErroData1={setErroData1}
-      setErroData2={setErroData2}
-    />
+    <SafeAreaView style={{ flex: 1 }}>
+      <View style={{ flex: 1, paddingBottom: insets.bottom }}>
+        <FormularioInspecao
+          tituloInspecao={tituloInspecao}
+          setTituloInspecao={setTituloInspecao}
+          tipoInspecao={tipoInspecao}
+          setArea={setArea}
+          unidade={unidade}
+          setUnidade={setUnidade}
+          data1={data1}
+          setData1={setData1}
+          data2={data2}
+          setData2={setData2}
+          responsavel={responsavel}
+          setResponsavel={setResponsavel}
+          fnEquipamento={fnEquipamento}
+          setFnEquipamento={setFnEquipamento}
+          nomeEquipamento={nomeEquipamento}
+          setnomeEquipamento={setnomeEquipamento}
+          localInstalacao={localInstalacao}
+          setLocalInstalacao={setLocalInstalacao}
+          plano={plano}
+          setPlano={setPlano}
+          listaTarefas={listaTarefas}
+          setListaTarefas={setListaTarefas}
+          escopos={escopos}
+          setEscopos={setEscopos}
+          adicionarEscopo={adicionarEscopo}
+          removerEscopo={removerEscopo}
+          escolherImagem={escolherImagem}
+          assinatura={assinatura}
+          setAssinando={setAssinando}
+          fotoSelecionada={fotoSelecionada}
+          setFotoSelecionada={setFotoSelecionada}
+          salvarRelatorio={salvarRelatorio}
+          confirmarFinalizacao={confirmarFinalizacao}
+          podeFinalizar={podeFinalizar}
+          formatDate={formatDate}
+          erroData1={erroData1}
+          erroData2={erroData2}
+          setErroData1={setErroData1}
+          setErroData2={setErroData2}
+        />
+      </View>
+    </SafeAreaView >
   );
 }
