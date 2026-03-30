@@ -4,6 +4,9 @@ import { useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback } from "react";
 import { styles } from "../styles/styles";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+
+
 
 export default function ListaRelatorios({ navigation }: any) {
   const [relatorios, setRelatorios] = useState<any[]>([]);
@@ -41,6 +44,9 @@ export default function ListaRelatorios({ navigation }: any) {
       },
     ]);
   };
+  
+  const insets = useSafeAreaInsets();
+
   const excluirRelatorio = async (id: string) => {
     const dados = await AsyncStorage.getItem("relatorios");
 
@@ -54,76 +60,78 @@ export default function ListaRelatorios({ navigation }: any) {
   };
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: "#f2f2f2" }}>
-      <View style={{ padding: 20, alignItems: "center" }}>
-        <Image source={require("../assets/sylvamo-logo.png")} style={styles.logo} />
+    <SafeAreaView style={{ flex: 1 }}>
+      <ScrollView style={{ flex: 1, backgroundColor: "#f2f2f2", paddingBottom: insets.bottom }}>
+        <View style={{ padding: 20, alignItems: "center" }}>
+          <Image source={require("../assets/sylvamo-logo.png")} style={styles.logo} />
 
-        <Text style={{ fontSize: 18, color: "#555", marginBottom: 40 }}>
-          Relatórios técnicos de inspeção
-        </Text>
+          <Text style={{ fontSize: 18, color: "#555", marginBottom: 40 }}>
+            Relatórios técnicos de inspeção
+          </Text>
 
-        <Pressable
-          onPress={() => navigation.navigate("Formulario")}
-          style={({ pressed }) => [
-            {
-              backgroundColor: "#7B3FE4",
-              paddingVertical: 15,
-              paddingHorizontal: 80,
-              borderRadius: 8,
-              marginBottom: 25,
-              alignItems: "center",
-            },
-            pressed && {
-              opacity: 0.8,
-              transform: [{ scale: 0.96 }],
-            },
-          ]}
-        >
-          <Text style={{ color: "white", fontSize: 18, fontWeight: "600" }}>Novo relatório</Text>
-        </Pressable>
-        <View
-          style={{
-            height: 1,
-            width: "100%",
-            backgroundColor: "#ddd",
-            marginVertical: 15,
-          }}
-        />
-        <Text style={{ fontSize: 20, fontWeight: "600", color: "##333", marginBottom: 6 }}>
-          Relatórios em aberto
-        </Text>
-
-        <Text style={{ textAlign: "center", marginBottom: 20, color: "#777" }}>
-          •Toque em um relatório abaixo para continuar {"\n"}• Segure para excluir
-        </Text>
-      </View>
-
-      <View style={{ paddingHorizontal: 20 }}>
-        {relatorios.map((relatorio) => (
           <Pressable
-            key={relatorio.id}
-            onPress={() => navigation.navigate("Formulario", { relatorio })}
-            onLongPress={() => confirmarExclusao(relatorio.id)}
+            onPress={() => navigation.navigate("Formulario")}
             style={({ pressed }) => [
               {
-                backgroundColor: pressed ? "#ddd" : "#eee",
-                padding: 7,
-                marginBottom: 7,
-                borderRadius: 5,
+                backgroundColor: "#7B3FE4",
+                paddingVertical: 15,
+                paddingHorizontal: 80,
+                borderRadius: 8,
+                marginBottom: 25,
+                alignItems: "center",
               },
               pressed && {
-                transform: [{ scale: 0.98 }],
+                opacity: 0.8,
+                transform: [{ scale: 0.96 }],
               },
             ]}
           >
-            <Text style={{ fontWeight: "bold" }}>
-              {relatorio.tituloInspecao || "Relatório sem título"}
-            </Text>
-
-            <Text>Status: {relatorio.status}</Text>
+            <Text style={{ color: "white", fontSize: 18, fontWeight: "600" }}>Novo relatório</Text>
           </Pressable>
-        ))}
-      </View>
-    </ScrollView>
+          <View
+            style={{
+              height: 1,
+              width: "100%",
+              backgroundColor: "#ddd",
+              marginVertical: 15,
+            }}
+          />
+          <Text style={{ fontSize: 20, fontWeight: "600", color: "##333", marginBottom: 6 }}>
+            Relatórios em aberto
+          </Text>
+
+          <Text style={{ textAlign: "center", marginBottom: 20, color: "#777" }}>
+            •Toque em um relatório abaixo para continuar {"\n"}• Segure para excluir
+          </Text>
+        </View>
+
+        <View style={{ paddingHorizontal: 20 }}>
+          {relatorios.map((relatorio) => (
+            <Pressable
+              key={relatorio.id}
+              onPress={() => navigation.navigate("Formulario", { relatorio })}
+              onLongPress={() => confirmarExclusao(relatorio.id)}
+              style={({ pressed }) => [
+                {
+                  backgroundColor: pressed ? "#ddd" : "#eee",
+                  padding: 7,
+                  marginBottom: 7,
+                  borderRadius: 5,
+                },
+                pressed && {
+                  transform: [{ scale: 0.98 }],
+                },
+              ]}
+            >
+              <Text style={{ fontWeight: "bold" }}>
+                {relatorio.tituloInspecao || "Relatório sem título"}
+              </Text>
+
+              <Text>Status: {relatorio.status}</Text>
+            </Pressable>
+          ))}
+        </View>
+      </ScrollView>
+    </SafeAreaView >
   );
 }

@@ -496,7 +496,7 @@ export default function App({ navigation, route }: any) {
 
   if (assinando) {
     return (
-      <View style={{ flex: 1, backgroundColor: "#fff" }}>
+      <View style={{ flex: 1, backgroundColor: "#fff", paddingBottom: insets.bottom}}>
         <SignaturePad
           ref={signatureRef}
           onOK={handleOK}
