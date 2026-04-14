@@ -87,7 +87,7 @@ export default function App({ navigation, route }: any) {
       observacao: string;
       recomendacao: string;
     }[]
-  >([]);
+    >([]);
 
   const removerEscopo = (index: number) => {
     Alert.alert("Remover item", "Tem certeza que deseja remover este item da inspeção?", [
@@ -162,9 +162,17 @@ export default function App({ navigation, route }: any) {
       assinatura,
     };
 
-    const novaLista = lista.filter((r: any) => r.id !== id);
-    novaLista.push(novoRelatorio);
-    await AsyncStorage.setItem("relatorios", JSON.stringify(novaLista));
+    const index = lista.findIndex((r: any) => r.id === id);
+
+    if (index !== -1) {
+      // Atualiza existente
+      lista[index] = novoRelatorio;
+    } else {
+      // Cria novo
+      lista.push(novoRelatorio);
+    }
+
+    await AsyncStorage.setItem("relatorios", JSON.stringify(lista));
   };
 
   // Salvar com Alert — usado pelo botão manual
