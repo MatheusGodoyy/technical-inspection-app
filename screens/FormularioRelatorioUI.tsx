@@ -184,7 +184,7 @@ export default function FormularioInspecao(props: any) {
             style={[styles.input, erroPlano && styles.inputError]}
             placeholderTextColor="#ababab"
             value={plano}
-            onChangeText={(text) => { setLocalInstalacao(text); setErroLocalInstalacao(false); }}
+            onChangeText={(text) => { setPlano(text); setErroPlano(false); }}
           />
         </View>
 
