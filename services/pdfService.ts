@@ -40,7 +40,7 @@ export async function gerarPDF(relatorio: any) {
 
             const fotosHTML = fotosBase64
               .filter(Boolean)
-              .map((foto) => `<img src="${foto}" style="width:150px;height:auto;margin:5px;" />`)
+              .map((foto) => `<img src="${foto}" />`)
               .join("");
 
             return `

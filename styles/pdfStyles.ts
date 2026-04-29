@@ -96,11 +96,12 @@ export const pdfStyles = `
   flex-wrap: wrap;
   gap: 8px;
   margin-top: 10px;
+  justify-content: flex-start;
 }
 
 .fotos img {
-  width: 200px;
-  height: 150px;
+  width: 365px;
+  height: 300px;
   object-fit: cover;
   border-radius: 4px;
   border: 1px solid #ddd;
