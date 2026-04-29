@@ -54,7 +54,7 @@ npx expo start
 
 ### Clone the repository
 on bash
-git clone https://github.com/YOUR_USERNAME/mechanical-inspection-app.git
+git clone https://github.com/MatheusGodoyy/mechanical-inspection-app
 cd mechanical-inspection-app
 
 ### Project Status
