@@ -16,28 +16,35 @@
       "bundleIdentifier": "com.sylvamo.inspecao",
       "buildNumber": "1.0.0",
       "infoPlist": {
-        "NSPhotoLibraryAddUsageDescription": "Precisamos salvar fotos na sua galeria"
+        "NSPhotoLibraryAddUsageDescription": "Precisamos salvar fotos na sua galeria",
+        "NSPhotoLibraryUsageDescription": "Precisamos acessar sua galeria para adicionar fotos à inspeção",
+        "NSCameraUsageDescription": "Precisamos da câmera para tirar fotos dos itens inspecionados"
       }
     },
-    "android": {
-      "package": "com.sylvamo.inspecao",
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/17550778.png",
-        "backgroundColor": "#ffffff"
-      },
-      "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    },
-    "plugins": [
-      "expo-sqlite"
-    ],
     "extra": {
       "eas": {
         "projectId": "4d5e5109-384f-4ca9-9902-d02726f2292e"
       }
+    }
+  },
+  "android": {
+    "package": "com.sylvamo.inspecao",
+    "adaptiveIcon": {
+      "foregroundImage": "./assets/17550778.png",
+      "backgroundColor": "#ffffff"
+    },
+    "edgeToEdgeEnabled": true,
+    "predictiveBackGestureEnabled": false
+  },
+  "web": {
+    "favicon": "./assets/favicon.png"
+  },
+  "plugins": [
+    "expo-sqlite"
+  ],
+  "extra": {
+    "eas": {
+      "projectId": "4d5e5109-384f-4ca9-9902-d02726f2292e"
     }
   }
 }

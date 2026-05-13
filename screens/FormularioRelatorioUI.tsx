@@ -36,8 +36,7 @@ export default function FormularioInspecao(props: any) {
     erroEscopos,
   } = props;
 
-  const podeFinalizar = () => true; // validação agora é feita no controller
-
+  const podeFinalizar = () => true; 
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}

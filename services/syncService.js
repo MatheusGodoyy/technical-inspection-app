@@ -55,7 +55,6 @@ export const enviarInspecao = async (inspecao) => {
       encoding: FileSystem.EncodingType.Base64,
     });
 
-    // 🔹 converter escopos do SQLite (string) para array
     const escopos = JSON.parse(inspecao.escopos || "[]");
 
     const itensConforme = escopos.filter((i) => i.status === "conforme").length;
@@ -153,7 +152,6 @@ export const sincronizar = async () => {
       if (sucesso) {
         await marcarComoSincronizado(inspecao.id);
 
-        // APAGA O PDF AQUI NO CELULAR.
         await FileSystem.deleteAsync(inspecao.path_pdf, {
           idempotent: true,
         });

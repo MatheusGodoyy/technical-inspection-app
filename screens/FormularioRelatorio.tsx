@@ -34,7 +34,7 @@ export default function App({ navigation, route }: any) {
   const [unidade, setUnidade] = useState("");
   const insets = useSafeAreaInsets();
 
-  // Estados de erro para destacar campos inválidos
+  
   const [erroTitulo, setErroTitulo] = useState(false);
   const [erroTipo, setErroTipo] = useState(false);
   const [erroUnidade, setErroUnidade] = useState(false);
