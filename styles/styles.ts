@@ -7,10 +7,10 @@ export const styles = StyleSheet.create({
   },
 
   label: {
-  fontSize: 14,
-  color: "#888",        
-  marginBottom: -6,
-},
+    fontSize: 14,
+    color: "#888",
+    marginBottom: -6,
+  },
   header: {
     alignItems: "center",
     marginBottom: -8,
@@ -162,5 +162,39 @@ export const styles = StyleSheet.create({
 
   statusNaoConforme: {
     backgroundColor: "#f24949", // vermelho
+  },
+
+  overlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.4)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 9999,
+  },
+
+  loadingBox: {
+    backgroundColor: "#fff",
+    padding: 24,
+    borderRadius: 12,
+    alignItems: "center",
+    width: 260,
+  },
+
+  loadingTitle: {
+    marginTop: 16,
+    fontSize: 16,
+    fontWeight: "600",
+    textAlign: "center",
+  },
+
+  loadingSubtitle: {
+    marginTop: 8,
+    fontSize: 14,
+    color: "#666",
+    textAlign: "center",
   },
 });

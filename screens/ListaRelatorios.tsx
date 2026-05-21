@@ -73,7 +73,7 @@ export default function ListaRelatorios({ navigation }: any) {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView style={{ flex: 1, backgroundColor: "#f2f2f2", paddingBottom: insets.bottom }}>
+      <ScrollView style={{ flex: 1, backgroundColor: "#f2f2f2" }}>
         <View style={{ padding: 20, alignItems: "center" }}>
           <Image source={require("../assets/sylvamo-logo.png")} style={styles.logo} />
 

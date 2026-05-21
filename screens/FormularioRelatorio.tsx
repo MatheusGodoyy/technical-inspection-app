@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
 import * as Network from "expo-network";
+import * as FileSystem from "expo-file-system/legacy";
 import { useEffect, useRef, useState } from "react";
 import { Alert, Pressable, Text, View } from "react-native";
 import Signature from "react-native-signature-canvas";
@@ -10,6 +11,8 @@ import { gerarPDF } from "../services/pdfService";
 import { sincronizar } from "../services/syncService.js";
 import FormularioInspecao from "../screens/FormularioRelatorioUI";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { ActivityIndicator } from "react-native";
+import { styles } from "../styles/styles";
 
 export default function App({ navigation, route }: any) {
   const relatorio = route.params?.relatorio;
@@ -33,8 +36,9 @@ export default function App({ navigation, route }: any) {
   const [fotoSelecionada, setFotoSelecionada] = useState<string | null>(null);
   const [unidade, setUnidade] = useState("");
   const insets = useSafeAreaInsets();
+  const [finalizando, setFinalizando] = useState(false);
 
-  
+
   const [erroTitulo, setErroTitulo] = useState(false);
   const [erroTipo, setErroTipo] = useState(false);
   const [erroUnidade, setErroUnidade] = useState(false);
@@ -180,7 +184,21 @@ export default function App({ navigation, route }: any) {
     await salvarSilencioso();
     Alert.alert(
       "Relatório salvo 📝",
-      "Este relatório foi salvo como rascunho.\n\nO envio será realizado somente após a finalização."
+      "Este relatório foi salvo como rascunho.\n\nO envio será realizado somente após a finalização.",
+      [
+        {
+          text: "OK",
+
+          onPress: () => {
+
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "Lista" }],
+            });
+
+          },
+        },
+      ]
     );
   };
 
@@ -214,87 +232,229 @@ export default function App({ navigation, route }: any) {
     setAssinatura(relatorio.assinatura);
   }, []);
 
+
   const finalizarRelatorio = async () => {
-    let valido = true;
-    const novosErrosEscopos: typeof erroEscopos = {};
 
-    // Reset erros
-    setErroTitulo(false);
-    setErroTipo(false);
-    setErroUnidade(false);
-    setErroData1(false);
-    setErroData2(false);
-    setErroResponsavel(false);
-    setErroFn(false);
-    setErroNomeEquipamento(false);
-    setErroLocalInstalacao(false);
-    setErroPlano(false);
-    setErroListaTarefas(false);
-    setErroAssinatura(false);
-    setErroEscopos({});
+    // evita clique duplo
+    if (finalizando) return;
 
-    if (!tituloInspecao.trim()) { setErroTitulo(true); valido = false; }
-    if (!tipoInspecao.trim()) { setErroTipo(true); valido = false; }
-    if (!unidade.trim()) { setErroUnidade(true); valido = false; }
-    if (!isValidDate(data1)) { setErroData1(true); valido = false; }
-    if (!isValidDate(data2)) { setErroData2(true); valido = false; }
-    if (isValidDate(data1) && isValidDate(data2) && !isNextDateAfterCurrent(data1, data2)) {
-      setErroData2(true); valido = false;
+    setFinalizando(true);
+
+    try {
+
+      let valido = true;
+
+      const novosErrosEscopos: typeof erroEscopos = {};
+
+      // Reset erros
+      setErroTitulo(false);
+      setErroTipo(false);
+      setErroUnidade(false);
+      setErroData1(false);
+      setErroData2(false);
+      setErroResponsavel(false);
+      setErroFn(false);
+      setErroNomeEquipamento(false);
+      setErroLocalInstalacao(false);
+      setErroPlano(false);
+      setErroListaTarefas(false);
+      setErroAssinatura(false);
+      setErroEscopos({});
+
+      if (!tituloInspecao.trim()) {
+        setErroTitulo(true);
+        valido = false;
+      }
+
+      if (!tipoInspecao.trim()) {
+        setErroTipo(true);
+        valido = false;
+      }
+
+      if (!unidade.trim()) {
+        setErroUnidade(true);
+        valido = false;
+      }
+
+      if (!isValidDate(data1)) {
+        setErroData1(true);
+        valido = false;
+      }
+
+      if (!isValidDate(data2)) {
+        setErroData2(true);
+        valido = false;
+      }
+
+      if (
+        isValidDate(data1) &&
+        isValidDate(data2) &&
+        !isNextDateAfterCurrent(data1, data2)
+      ) {
+        setErroData2(true);
+        valido = false;
+      }
+
+      if (!responsavel.trim()) {
+        setErroResponsavel(true);
+        valido = false;
+      }
+
+      if (!fnEquipamento.trim()) {
+        setErroFn(true);
+        valido = false;
+      }
+
+      if (!nomeEquipamento.trim()) {
+        setErroNomeEquipamento(true);
+        valido = false;
+      }
+
+      if (!localInstalacao.trim()) {
+        setErroLocalInstalacao(true);
+        valido = false;
+      }
+
+      if (!plano.trim()) {
+        setErroPlano(true);
+        valido = false;
+      }
+
+      if (!listaTarefas.trim()) {
+        setErroListaTarefas(true);
+        valido = false;
+      }
+
+      if (!assinatura) {
+        setErroAssinatura(true);
+        valido = false;
+      }
+
+      if (escopos.length === 0) {
+
+        valido = false;
+
+      } else {
+
+        escopos.forEach((e) => {
+
+          const erros: {
+            titulo?: boolean;
+            observacao?: boolean;
+            recomendacao?: boolean;
+          } = {};
+
+          if (!e.tituloItem?.trim()) {
+            erros.titulo = true;
+            valido = false;
+          }
+
+          if (e.status === null) {
+            valido = false;
+          }
+
+          if (e.status === "nao_conforme") {
+
+            if (!e.observacao?.trim()) {
+              erros.observacao = true;
+              valido = false;
+            }
+
+            if (!e.recomendacao?.trim()) {
+              erros.recomendacao = true;
+              valido = false;
+            }
+          }
+
+          if (Object.keys(erros).length > 0) {
+            novosErrosEscopos[e.id] = erros;
+          }
+        });
+      }
+
+      setErroEscopos(novosErrosEscopos);
+
+      if (!valido) {
+
+        Alert.alert(
+          "Campos obrigatórios",
+          "Preencha todos os campos destacados em vermelho antes de finalizar."
+        );
+
+        setFinalizando(false);
+
+        return;
+      }
+
+      await gerarPDFESalvar();
+
+      const dados = await AsyncStorage.getItem("relatorios");
+
+      const lista = JSON.parse(dados || "[]");
+
+      const novaLista = lista.map((r: any) =>
+        r.id === relatorioAtualId
+          ? { ...r, status: "finalizado" }
+          : r
+      );
+
+      await AsyncStorage.setItem(
+        "relatorios",
+        JSON.stringify(novaLista)
+      );
+
+      Alert.alert(
+        "Relatório finalizado ✅",
+        "O envio será feito automaticamente quando houver conexão com a internet.\n\n📌IMPORTANTE: Caso o relatório ainda não tenha sido enviado, ele será enviado automaticamente na próxima vez que você abrir o aplicativo com conexão à internet.",
+        [
+          {
+            text: "OK",
+            onPress: () => {
+
+              setFinalizando(false);
+
+              navigation.reset({
+                index: 0,
+                routes: [{ name: "Lista" }],
+              });
+            }
+          },
+        ]
+      );
+
+    } catch (error) {
+
+      console.log("Erro ao finalizar:", error);
+
+      Alert.alert(
+        "Erro",
+        "Ocorreu um erro ao finalizar o relatório."
+      );
+
+      setFinalizando(false);
     }
-    if (!responsavel.trim()) { setErroResponsavel(true); valido = false; }
-    if (!fnEquipamento.trim()) { setErroFn(true); valido = false; }
-    if (!nomeEquipamento.trim()) { setErroNomeEquipamento(true); valido = false; }
-    if (!localInstalacao.trim()) { setErroLocalInstalacao(true); valido = false; }
-    if (!plano.trim()) { setErroPlano(true); valido = false; }
-    if (!listaTarefas.trim()) { setErroListaTarefas(true); valido = false; }
-    if (!assinatura) { setErroAssinatura(true); valido = false; }
-
-    if (escopos.length === 0) {
-      valido = false;
-    } else {
-      escopos.forEach((e) => {
-        const erros: { titulo?: boolean; observacao?: boolean; recomendacao?: boolean } = {};
-        if (!e.tituloItem?.trim()) { erros.titulo = true; valido = false; }
-        if (e.status === null) { valido = false; }
-        if (e.status === "nao_conforme") {
-          if (!e.observacao?.trim()) { erros.observacao = true; valido = false; }
-          if (!e.recomendacao?.trim()) { erros.recomendacao = true; valido = false; }
-        }
-        if (Object.keys(erros).length > 0) novosErrosEscopos[e.id] = erros;
-      });
-    }
-
-    setErroEscopos(novosErrosEscopos);
-
-    if (!valido) {
-      Alert.alert("Campos obrigatórios", "Preencha todos os campos destacados em vermelho antes de finalizar.");
-      return;
-    }
-
-    await gerarPDFESalvar();
-
-    const dados = await AsyncStorage.getItem("relatorios");
-    const lista = JSON.parse(dados || "[]");
-    const novaLista = lista.map((r: any) =>
-      r.id === relatorioAtualId ? { ...r, status: "finalizado" } : r
-    );
-    await AsyncStorage.setItem("relatorios", JSON.stringify(novaLista));
-
-    Alert.alert(
-      "Relatório finalizado ✅",
-      "O envio será feito automaticamente quando houver conexão com a internet.\n\n📌IMPORTANTE: Caso o relatório ainda não tenha sido enviado, ele será enviado automaticamente na próxima vez que você abrir o aplicativo com conexão à internet.",
-      [{ text: "OK", onPress: () => navigation.navigate("Lista") }]
-    );
   };
 
   const confirmarFinalizacao = () => {
+
     Alert.alert(
       "Finalizar relatório",
       "Tem certeza que deseja finalizar este relatório?\n\nApós finalizado não será possível continuar editando. Será necessário criar um novo relatório.",
       [
-        { text: "Cancelar", style: "cancel" },
-        { text: "Finalizar", style: "destructive", onPress: () => finalizarRelatorio() },
-      ],
+        {
+          text: "Cancelar",
+          style: "cancel",
+        },
+
+        {
+          text: "Finalizar",
+          style: "destructive",
+
+          onPress: () => {
+            finalizarRelatorio();
+          },
+        },
+      ]
     );
   };
 
@@ -328,8 +488,13 @@ export default function App({ navigation, route }: any) {
     if (!result.canceled) {
       const uri = result.assets[0].uri;
       await MediaLibrary.saveToLibraryAsync(uri);
+
+      const nomeArquivo = `foto_${Date.now()}.jpg`;
+      const destino = FileSystem.documentDirectory + nomeArquivo;
+      await FileSystem.copyAsync({ from: uri, to: destino });
+
       const copia = [...escopos];
-      copia[index].fotos.push(uri);
+      copia[index].fotos.push(destino);
       setEscopos(copia);
     }
   };
@@ -339,8 +504,14 @@ export default function App({ navigation, route }: any) {
     if (status !== "granted") { Alert.alert("Permissão necessária", "Precisamos acessar a galeria"); return; }
     const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ImagePicker.MediaTypeOptions.Images, quality: 0.7 });
     if (!result.canceled) {
+      const uri = result.assets[0].uri;
+
+      const nomeArquivo = `foto_${Date.now()}.jpg`;
+      const destino = FileSystem.documentDirectory + nomeArquivo;
+      await FileSystem.copyAsync({ from: uri, to: destino });
+
       const copia = [...escopos];
-      copia[index].fotos.push(result.assets[0].uri);
+      copia[index].fotos.push(destino);
       setEscopos(copia);
     }
   };
@@ -393,7 +564,7 @@ export default function App({ navigation, route }: any) {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <View style={{ flex: 1, paddingBottom: insets.bottom }}>
+      <View style={{ flex: 1 }}>
         <FormularioInspecao
           tituloInspecao={tituloInspecao}
           setTituloInspecao={setTituloInspecao}
@@ -453,6 +624,29 @@ export default function App({ navigation, route }: any) {
           erroAssinatura={erroAssinatura}
           erroEscopos={erroEscopos}
         />
+
+        {finalizando && (
+          <View style={styles.overlay}>
+
+            <View style={styles.loadingBox}>
+
+              <ActivityIndicator
+                size="large"
+                color="#1B5E20"
+              />
+
+              <Text style={styles.loadingTitle}>
+                Finalizando relatório...
+              </Text>
+
+              <Text style={styles.loadingSubtitle}>
+                Gerando PDF e salvando informações
+              </Text>
+
+            </View>
+
+          </View>
+        )}
       </View>
     </SafeAreaView>
   );

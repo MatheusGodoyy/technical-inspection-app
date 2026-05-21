@@ -2,7 +2,7 @@
   "expo": {
     "name": "Inspeção Técnica Digital",
     "slug": "inspecao-tecnica-digital",
-    "version": "1.0.1",
+    "version": "1.0.7",
     "orientation": "portrait",
     "icon": "./assets/17550778.png",
     "userInterfaceStyle": "light",
@@ -14,17 +14,21 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.sylvamo.inspecao",
-      "buildNumber": "1.0.0",
+      "buildNumber": "1.0.1",
       "infoPlist": {
         "NSPhotoLibraryAddUsageDescription": "Precisamos salvar fotos na sua galeria",
         "NSPhotoLibraryUsageDescription": "Precisamos acessar sua galeria para adicionar fotos à inspeção",
-        "NSCameraUsageDescription": "Precisamos da câmera para tirar fotos dos itens inspecionados"
+        "NSCameraUsageDescription": "Precisamos da câmera para tirar fotos dos itens inspecionados",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "extra": {
       "eas": {
         "projectId": "4d5e5109-384f-4ca9-9902-d02726f2292e"
       }
+    },
+    "android": {
+      "package": "com.sylvamo.inspecao"
     }
   },
   "android": {

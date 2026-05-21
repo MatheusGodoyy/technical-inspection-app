@@ -45,7 +45,10 @@ export default function App() {
         <Stack.Screen
           name="Formulario"
           component={FormularioRelatorio}
-          options={{ title: "Inspeção" }}
+          options={{
+            title: "Inspeção",
+            headerBackVisible: false
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>

@@ -94,19 +94,33 @@ export const pdfStyles = `
 .fotos {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
   margin-top: 10px;
-  justify-content: flex-start;
 }
 
-.fotos img {
-  width: 365px;
-  height: 300px;
-  object-fit: cover;
-  border-radius: 4px;
+.foto-item {
+  width: 32%;
+  height: 220px;
+
   border: 1px solid #ddd;
+  border-radius: 4px;
+
+  overflow: hidden;
+
+  box-sizing: border-box;
+
+  page-break-inside: avoid;
+  break-inside: avoid;
 }
 
+.foto-item img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+
+  display: block;
+}
 /* ASSINATURA */
 
 .signature {
