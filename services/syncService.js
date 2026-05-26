@@ -39,7 +39,7 @@ const converterDataSegura = (dataBR) => {
 };
 
 const URL_FLUXO =
-  "https://defaulteb4154c51e814c3c9e5da8a547806c.8e.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/ec9dfc3a7c914e06bc5d89b81831b7a6/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=WyX1laUfT9GICmr8rh1t8BAyXXwWJi8U-RYxwIX7Lsk";
+  "";
 
 let sincronizando = false;
 
