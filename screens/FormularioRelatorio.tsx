@@ -37,6 +37,7 @@ export default function App({ navigation, route }: any) {
   const [unidade, setUnidade] = useState("");
   const insets = useSafeAreaInsets();
   const [finalizando, setFinalizando] = useState(false);
+  const foiFinalizado = useRef(false);
 
 
   const [erroTitulo, setErroTitulo] = useState(false);
@@ -205,7 +206,11 @@ export default function App({ navigation, route }: any) {
   // Auto-save ao sair da tela
   useEffect(() => {
     const unsubscribe = navigation.addListener("beforeRemove", async () => {
-      await salvarSilencioso();
+
+      if (!foiFinalizado.current) {  // ← adiciona essa verificação
+        await salvarSilencioso();
+      }
+
     });
     return unsubscribe;
   }, [
@@ -412,6 +417,8 @@ export default function App({ navigation, route }: any) {
             onPress: () => {
 
               setFinalizando(false);
+
+              foiFinalizado.current = true;
 
               navigation.reset({
                 index: 0,
