@@ -7,10 +7,12 @@
     "icon": "./assets/17550778.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
+
     "splash": {
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.sylvamo.inspecao",
@@ -22,33 +24,29 @@
         "ITSAppUsesNonExemptEncryption": false
       }
     },
+
+    "android": {
+      "package": "com.sylvamo.inspecao",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/17550778.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false
+    },
+
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+
+    "plugins": [
+      "expo-sqlite"
+    ],
+
     "extra": {
       "eas": {
         "projectId": "4d5e5109-384f-4ca9-9902-d02726f2292e"
       }
-    },
-    "android": {
-      "package": "com.sylvamo.inspecao"
-    }
-  },
-  "android": {
-    "package": "com.sylvamo.inspecao",
-    "adaptiveIcon": {
-      "foregroundImage": "./assets/17550778.png",
-      "backgroundColor": "#ffffff"
-    },
-    "edgeToEdgeEnabled": true,
-    "predictiveBackGestureEnabled": false
-  },
-  "web": {
-    "favicon": "./assets/favicon.png"
-  },
-  "plugins": [
-    "expo-sqlite"
-  ],
-  "extra": {
-    "eas": {
-      "projectId": "4d5e5109-384f-4ca9-9902-d02726f2292e"
     }
   }
 }

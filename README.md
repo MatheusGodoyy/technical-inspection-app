@@ -22,21 +22,69 @@ Mobile application designed for **mechanical inspection recording and tracking**
 
 ## Project Structure
 
+```
 mechanical-inspection-app/
-├── assets/                # Images, icons and static resources
-├── screens/               # Application screens
-│   ├── FormularioRelatorio.tsx
-│   └── ListaRelatorios.tsx
-├── services/              # Business logic and utilities
-│   └── pdfService.ts
-├── styles/                # Global styles
-│   └── styles.ts
-├── App.tsx                # Main application component
-├── index.ts               # Application entry point
-├── app.json               # Expo configuration
-├── package.json           # Project dependencies
-├── tsconfig.json          # TypeScript configuration
-└── README.md              # Project documentation
+├── src/
+│   ├── screens/                    # Application screens
+│   │   ├── ListaRelatorios.tsx
+│   │   ├── SelecionarTipoInspecao.tsx
+│   │   ├── FormularioRelatorioMecanicoCivil.tsx
+│   │   ├── FormularioRelatorioEletrico.tsx
+│   │   └── FormularioRelatorioUI.tsx
+│   ├── services/                   # Business logic
+│   │   ├── pdf/
+│   │   │   ├── pdfService.ts
+│   │   │   └── types.ts
+│   │   ├── sync/
+│   │   │   └── syncService.ts
+│   │   └── storage/
+│   ├── hooks/                      # Custom React hooks
+│   │   ├── useRelatorios.ts
+│   │   ├── useAsync.ts
+│   │   └── useFormValidation.ts
+│   ├── types/                      # TypeScript interfaces and types
+│   │   ├── relatorio.ts
+│   │   ├── inspecao.ts
+│   │   └── errors.ts
+│   ├── constants/                  # Global constants
+│   │   ├── routes.ts
+│   │   ├── strings.ts
+│   │   └── ui.ts
+│   ├── config/                     # Configuration files
+│   │   ├── navigation.ts
+│   │   └── env.ts
+│   ├── utils/                      # Utility functions
+│   │   ├── validation.ts
+│   │   ├── formatters.ts
+│   │   └── validators.ts
+│   ├── database/                   # Database setup
+│   │   └── database.ts
+│   ├── styles/                     # Global styles
+│   │   ├── styles.ts
+│   │   └── pdfStyles.ts
+│   └── App.tsx                     # Main application component
+├── assets/                         # Images, icons and static resources
+├── index.ts                        # Application entry point
+├── app.json                        # Expo configuration
+├── eas.json                        # EAS Build configuration
+├── package.json                    # Project dependencies
+├── tsconfig.json                   # TypeScript configuration
+└── README.md                       # Project documentation
+```
+
+### Architecture Overview
+
+**Modular Structure**: The project is organized using domain-driven architecture with clear separation of concerns:
+
+- **Screens**: UI components for different application pages
+- **Services**: Business logic for PDF generation, synchronization, and storage
+- **Hooks**: Reusable React logic for state management
+- **Types**: Centralized TypeScript type definitions
+- **Constants**: All hardcoded strings and configuration values
+- **Config**: Navigation and environment configuration
+- **Utils**: Helper functions for validation and formatting
+- **Database**: SQLite setup and initialization
+- **Styles**: Global styling and PDF styling
 
 ### Getting Started
 
@@ -46,7 +94,7 @@ mechanical-inspection-app/
 - Expo CLI
 
 ### Installation
-on bash
+```bash
 npm install
 
 ### Running the App
